@@ -22,6 +22,10 @@
 package io.github.wszqkzqk.pvzportable;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -158,5 +162,73 @@ public class PvZPortableActivity extends SDLActivity {
         File pak = new File(dir, "main.pak");
         File props = new File(dir, "properties");
         return pak.exists() && props.isDirectory();
+    }
+
+    /**
+     * Native ultimate button label. Returns [width, height, ARGB pixels...] or null.
+     * Draws 「大招」 with system CJK fonts (Skia), matching the Windows candy-red style.
+     */
+    public static int[] createUltimateLabelImage() {
+        try {
+            final String text = "大招";
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.SUBPIXEL_TEXT_FLAG);
+            paint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+            paint.setTextSize(20f);
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setFakeBoldText(true);
+
+            Paint.FontMetrics fm = paint.getFontMetrics();
+            final int pad = 6;
+            final int width = Math.max(1, (int) Math.ceil(paint.measureText(text)) + pad * 2);
+            final int height = Math.max(22, (int) Math.ceil(fm.bottom - fm.top) + pad);
+            final float cx = width * 0.5f;
+            final float cy = height * 0.5f - (fm.ascent + fm.descent) * 0.5f;
+
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(0xFF5A1414);
+            for (int dy = -2; dy <= 2; ++dy) {
+                for (int dx = -2; dx <= 2; ++dx) {
+                    if (dx == 0 && dy == 0) continue;
+                    canvas.drawText(text, cx + dx, cy + dy, paint);
+                }
+            }
+            paint.setColor(0xFFFFFFFF);
+            canvas.drawText(text, cx, cy, paint);
+            paint.setColor(0xFFFF4646);
+            canvas.drawText(text, cx, cy - 1f, paint);
+
+            int[] pixels = new int[width * height];
+            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+            bitmap.recycle();
+
+            for (int i = 0; i < pixels.length; ++i) {
+                final int src = pixels[i];
+                final int aR = (src >> 16) & 0xFF;
+                final int aG = (src >> 8) & 0xFF;
+                final int aB = src & 0xFF;
+                final int coverage = Math.max(aR, Math.max(aG, aB));
+                if (coverage == 0) {
+                    pixels[i] = 0;
+                    continue;
+                }
+                final boolean outline = aR < 140 && aG < 80 && aB < 80;
+                final int outR = outline ? 70 : 255;
+                final int outG = outline ? 18 : 55;
+                final int outB = outline ? 18 : 55;
+                pixels[i] = (coverage << 24) | (outR << 16) | (outG << 8) | outB;
+            }
+
+            int[] out = new int[2 + pixels.length];
+            out[0] = width;
+            out[1] = height;
+            System.arraycopy(pixels, 0, out, 2, pixels.length);
+            return out;
+        } catch (Throwable t) {
+            Log.e(TAG, "createUltimateLabelImage failed", t);
+            return null;
+        }
     }
 }

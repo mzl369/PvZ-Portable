@@ -30,6 +30,9 @@
 #endif
 #include <windows.h>
 #endif
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
 #include "ZenGarden.h"
 #include "BoardInclude.h"
 #include "graphics/MemoryImage.h"
@@ -4155,7 +4158,51 @@ namespace
 	{
 		if (gUltimateLabelImage)
 			return gUltimateLabelImage.get();
-#ifdef _WIN32
+#ifdef __ANDROID__
+		JNIEnv* aEnv = static_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
+		jobject aActivity = aEnv ? static_cast<jobject>(SDL_AndroidGetActivity()) : nullptr;
+		if (aEnv && aActivity)
+		{
+			jclass aCls = aEnv->GetObjectClass(aActivity);
+			aEnv->DeleteLocalRef(aActivity);
+			jmethodID aMid = aCls
+				? aEnv->GetStaticMethodID(aCls, "createUltimateLabelImage", "()[I")
+				: nullptr;
+			jintArray aArr = nullptr;
+			if (aMid)
+				aArr = static_cast<jintArray>(aEnv->CallStaticObjectMethod(aCls, aMid));
+			if (aCls)
+				aEnv->DeleteLocalRef(aCls);
+			if (aEnv->ExceptionCheck())
+			{
+				aEnv->ExceptionClear();
+				aArr = nullptr;
+			}
+			if (aArr)
+			{
+				const jsize aLen = aEnv->GetArrayLength(aArr);
+				jint* aElems = aLen >= 2 ? aEnv->GetIntArrayElements(aArr, nullptr) : nullptr;
+				if (aElems)
+				{
+					const int aWidth = aElems[0];
+					const int aHeight = aElems[1];
+					if (aWidth > 0 && aHeight > 0 && aLen >= 2 + aWidth * aHeight)
+					{
+						gUltimateLabelImage = std::make_unique<MemoryImage>(gSexyAppBase);
+						gUltimateLabelImage->Create(aWidth, aHeight);
+						uint32_t* aDest = gUltimateLabelImage->GetBits();
+						for (int i = 0; i < aWidth * aHeight; ++i)
+							aDest[i] = static_cast<uint32_t>(aElems[2 + i]);
+						gUltimateLabelImage->BitsChanged();
+						gUltimateLabelImage->mHasAlpha = true;
+						gUltimateLabelImage->mHasTrans = true;
+					}
+					aEnv->ReleaseIntArrayElements(aArr, aElems, JNI_ABORT);
+				}
+				aEnv->DeleteLocalRef(aArr);
+			}
+		}
+#elif defined(_WIN32)
 		const std::wstring aWide = L"大招";
 		HDC aScreenDC = GetDC(nullptr);
 		HDC aMemDC = CreateCompatibleDC(aScreenDC);
