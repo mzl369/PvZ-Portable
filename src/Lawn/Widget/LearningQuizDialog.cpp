@@ -192,17 +192,25 @@ namespace
 
 	bool LoadQuizFontFile(std::vector<unsigned char>& theOutBytes, stbtt_fontinfo& theOutInfo)
 	{
-		static const char* kCandidates[] = {
+		// Prefer bundled CJK font under the resource root (Android import pack).
+		static const char* kBundledRel[] = {
 			"properties/fonts/quiz_cjk.ttf",
 			"properties/fonts/quiz_cjk.otf",
 			"properties/fonts/NotoSansSC-Regular.otf",
 			"properties/fonts/NotoSansCJKsc-Regular.otf",
+			nullptr
+		};
+		static const char* kSystemAbs[] = {
 #ifdef __ANDROID__
 			"/system/fonts/NotoSansCJK-Regular.ttc",
 			"/system/fonts/NotoSansSC-Regular.otf",
 			"/system/fonts/DroidSansFallback.ttf",
 			"/system/fonts/NotoSansCJK-Regular.ttf",
-			"/system/fonts/Roboto-Regular.ttf",
+			"/system/fonts/NotoSansCJK-Regular.otf",
+			"/product/fonts/NotoSansCJK-Regular.ttc",
+			"/product/fonts/NotoSansSC-Regular.otf",
+			"/product/fonts/DroidSansFallback.ttf",
+			"/system/fonts/NotoSerifCJK-Regular.ttc",
 #elif defined(__APPLE__)
 			"/System/Library/Fonts/PingFang.ttc",
 			"/System/Library/Fonts/STHeiti Light.ttc",
@@ -216,35 +224,61 @@ namespace
 			nullptr
 		};
 
-		for (int i = 0; kCandidates[i] != nullptr; ++i)
+		auto tryOpenPath = [](const std::string& thePath, std::vector<unsigned char>& theBytes) -> bool
 		{
-			std::ifstream aFile(kCandidates[i], std::ios::binary);
+			if (thePath.empty())
+				return false;
+			std::ifstream aFile(thePath, std::ios::binary);
 			if (!aFile)
-				continue;
+				return false;
 			aFile.seekg(0, std::ios::end);
 			const std::streamoff aSize = aFile.tellg();
 			if (aSize <= 0)
-				continue;
+				return false;
 			aFile.seekg(0, std::ios::beg);
-			std::vector<unsigned char> aBytes(static_cast<size_t>(aSize));
-			if (!aFile.read(reinterpret_cast<char*>(aBytes.data()), aSize))
-				continue;
+			theBytes.resize(static_cast<size_t>(aSize));
+			return static_cast<bool>(aFile.read(reinterpret_cast<char*>(theBytes.data()), aSize));
+		};
 
-			stbtt_fontinfo aInfo{};
-			const int aFontCount = std::max(1, stbtt_GetNumberOfFonts(aBytes.data()));
-			bool aOk = false;
+		// U+4E2D 「中」— reject Latin-only fonts (e.g. Roboto) that InitFont but have no CJK.
+		constexpr int kCjkProbeCp = 0x4E2D;
+		auto tryInitCjkFont = [&](std::vector<unsigned char>& theBytes, stbtt_fontinfo& theInfo) -> bool
+		{
+			const int aFontCount = std::max(1, stbtt_GetNumberOfFonts(theBytes.data()));
 			for (int aIndex = 0; aIndex < aFontCount; ++aIndex)
 			{
-				const int aOffset = stbtt_GetFontOffsetForIndex(aBytes.data(), aIndex);
+				const int aOffset = stbtt_GetFontOffsetForIndex(theBytes.data(), aIndex);
 				if (aOffset < 0)
 					continue;
-				if (stbtt_InitFont(&aInfo, aBytes.data(), aOffset))
-				{
-					aOk = true;
-					break;
-				}
+				stbtt_fontinfo aInfo{};
+				if (!stbtt_InitFont(&aInfo, theBytes.data(), aOffset))
+					continue;
+				if (stbtt_FindGlyphIndex(&aInfo, kCjkProbeCp) == 0)
+					continue;
+				theInfo = aInfo;
+				theInfo.data = theBytes.data();
+				return true;
 			}
-			if (!aOk)
+			return false;
+		};
+
+		std::vector<std::string> aPaths;
+		aPaths.reserve(16);
+		for (int i = 0; kBundledRel[i] != nullptr; ++i)
+		{
+			aPaths.push_back(Sexy::GetResourcePath(kBundledRel[i]));
+			aPaths.emplace_back(kBundledRel[i]); // also try CWD for desktop runs
+		}
+		for (int i = 0; kSystemAbs[i] != nullptr; ++i)
+			aPaths.emplace_back(kSystemAbs[i]);
+
+		for (const std::string& aPath : aPaths)
+		{
+			std::vector<unsigned char> aBytes;
+			if (!tryOpenPath(aPath, aBytes))
+				continue;
+			stbtt_fontinfo aInfo{};
+			if (!tryInitCjkFont(aBytes, aInfo))
 				continue;
 
 			theOutBytes = std::move(aBytes);
