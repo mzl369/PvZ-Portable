@@ -191,6 +191,7 @@ target_include_directories(pvz-portable PRIVATE
 	${PROJECT_SOURCE_DIR}/src
 	${PROJECT_SOURCE_DIR}/src/SexyAppFramework
 	${PROJECT_SOURCE_DIR}/src/SexyAppFramework/sound/SDL-Mixer-X/include
+	${PROJECT_SOURCE_DIR}/third_party/stb
 	${SDL2_INCLUDE_DIRS}
 )
 target_compile_definitions(pvz-portable PRIVATE

@@ -21,14 +21,23 @@
 
 #include <time.h>
 #include <algorithm>
+#include <vector>
 #include <SDL.h>
 #include <format>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
 #include "ZenGarden.h"
 #include "BoardInclude.h"
+#include "graphics/MemoryImage.h"
 #include "LawnCommon.h"
 #include "System/Music.h"
 #include "System/SaveGame.h"
 #include "Widget/LawnDialog.h"
+#include "Widget/LearningQuizDialog.h"
 #include "System/PlayerInfo.h"
 #include "System/PoolEffect.h"
 #include "System/TypingCheck.h"
@@ -116,6 +125,9 @@ Board::Board(LawnApp* theApp)
 	mShakeAmountX = 0;
 	mShakeAmountY = 0;
 	mPaused = false;
+	mPendingPlantQuiz = {};
+	mPendingUltimateQuiz = {};
+	mLearningQuizBypass = false;
 	mLevelAwardSpawned = false;
 	mFlagRaiseCounter = 0;
 	mIceTrapCounter = 0;
@@ -192,28 +204,36 @@ Board::Board(LawnApp* theApp)
 	mChallenge = std::make_unique<Challenge>();
 	mClip = false;
 	mDebugTextMode = DebugTextMode::DEBUG_TEXT_NONE;
-	mMenuButton = std::make_unique<GameButton>(0);
-	mMenuButton->mDrawStoneButton = true;
-	mStoreButton = nullptr;
-	mIgnoreMouseUp = false;
+		mMenuButton = std::make_unique<GameButton>(0);
+		mMenuButton->mDrawStoneButton = true;
+		mStoreButton = nullptr;
+		mUltimateButton = std::make_unique<GameButton>(2);
+		mUltimateButton->mBtnNoDraw = true;
+		mUltimateButton->mParentWidget = this;
+		mUltimateButton->SetLabel("");
+		mIgnoreMouseUp = false;
 
-	if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || mApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM)
-	{
-		mMenuButton->SetLabel("[MAIN_MENU_BUTTON]");
-		mMenuButton->Resize(628, -10, 163, 46);
+		if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || mApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM)
+		{
+			mMenuButton->SetLabel("[MAIN_MENU_BUTTON]");
+			mMenuButton->Resize(628, -10, 163, 46);
 
-		mStoreButton = std::make_unique<GameButton>(1);
-		mStoreButton->mButtonImage = IMAGE_ZENSHOPBUTTON;
-		mStoreButton->mOverImage = IMAGE_ZENSHOPBUTTON_HIGHLIGHT;
-		mStoreButton->mDownImage = IMAGE_ZENSHOPBUTTON_HIGHLIGHT;
-		mStoreButton->mParentWidget = this;
-		mStoreButton->Resize(678, 33, IMAGE_ZENSHOPBUTTON->mWidth, 40);
-	}
-	else
-	{
-		mMenuButton->SetLabel("[MENU_BUTTON]");
-		mMenuButton->Resize(681, -10, 117, 46);
-	}
+			mStoreButton = std::make_unique<GameButton>(1);
+			mStoreButton->mButtonImage = IMAGE_ZENSHOPBUTTON;
+			mStoreButton->mOverImage = IMAGE_ZENSHOPBUTTON_HIGHLIGHT;
+			mStoreButton->mDownImage = IMAGE_ZENSHOPBUTTON_HIGHLIGHT;
+			mStoreButton->mParentWidget = this;
+			mStoreButton->Resize(678, 33, IMAGE_ZENSHOPBUTTON->mWidth, 40);
+		}
+		else
+		{
+			mMenuButton->SetLabel("[MENU_BUTTON]");
+			mMenuButton->Resize(681, -10, 117, 46);
+		}
+
+		// Seed-packet sized ultimate button under the menu button.
+		mUltimateButton->Resize(mMenuButton->mX + (mMenuButton->mWidth - SEED_PACKET_WIDTH) / 2, 42, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT);
+		InitUltimateAbility();
 
 	if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND)
 	{
@@ -1629,6 +1649,7 @@ void Board::StartLevel()
 {
 	mCoinBankFadeCount = 0;
 	mApp->mLastLevelStats->Reset();
+	InitUltimateAbility();
 	mChallenge->StartLevel();
 
 	// the unsigned underflow below is intentional
@@ -3771,6 +3792,13 @@ void Board::MouseDownWithPlant(int x, int y, int theClickCount)
 	ClearAdvice(AdviceType::ADVICE_PLANT_POTATOE_MINE_ON_LILY);
 	ClearAdvice(AdviceType::ADVICE_SURVIVE_FLAGS);
 
+	// Kid learning gate: 50% chance to ask a quiz before spending sun / planting.
+	if (!mLearningQuizBypass && ShouldAskLearningQuiz() && (Sexy::Rand(2) == 0))
+	{
+		StartLearningQuizPlant(x, y, aGridX, aGridY);
+		return;
+	}
+
 	if (!mApp->mEasyPlantingCheat && mCursorObject->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_BANK && !HasConveyorBeltSeedBank())
 	{
 		if (!TakeSunMoney(GetCurrentPlantCost(aPlantingSeedType, SeedType::SEED_NONE)))
@@ -3947,6 +3975,810 @@ void Board::MouseDownWithPlant(int x, int y, int theClickCount)
 	}
 
 	ClearCursor();
+}
+
+bool Board::ShouldAskLearningQuiz() const
+{
+	if (!mApp || !mCursorObject)
+		return false;
+	if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN ||
+		mApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM)
+		return false;
+	if (mApp->GetDialog(Dialogs::DIALOG_LEARNING_QUIZ) != nullptr)
+		return false;
+
+	const CursorType aCursor = mCursorObject->mCursorType;
+	return aCursor == CursorType::CURSOR_TYPE_PLANT_FROM_BANK ||
+		aCursor == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN ||
+		aCursor == CursorType::CURSOR_TYPE_PLANT_FROM_DUPLICATOR;
+}
+
+void Board::StartLearningQuizPlant(int thePixelX, int thePixelY, int theGridX, int theGridY)
+{
+	mPendingPlantQuiz.mActive = true;
+	mPendingPlantQuiz.mPixelX = thePixelX;
+	mPendingPlantQuiz.mPixelY = thePixelY;
+	mPendingPlantQuiz.mGridX = theGridX;
+	mPendingPlantQuiz.mGridY = theGridY;
+
+	LearningQuizDialog* aDialog = new LearningQuizDialog(mApp, LearningQuizPurpose::Plant);
+	LawnApp::CenterDialog(aDialog, aDialog->mWidth, aDialog->mHeight);
+	mApp->AddDialog(Dialogs::DIALOG_LEARNING_QUIZ, aDialog);
+	mApp->mWidgetManager->SetFocus(aDialog);
+}
+
+void Board::FinishLearningQuizPlant()
+{
+	if (!mPendingPlantQuiz.mActive)
+		return;
+
+	const int aPixelX = mPendingPlantQuiz.mPixelX;
+	const int aPixelY = mPendingPlantQuiz.mPixelY;
+	mPendingPlantQuiz = {};
+
+	mLearningQuizBypass = true;
+	MouseDownWithPlant(aPixelX, aPixelY, 1);
+	mLearningQuizBypass = false;
+}
+
+void Board::CancelLearningQuizPlant()
+{
+	if (!mPendingPlantQuiz.mActive)
+		return;
+
+	mPendingPlantQuiz = {};
+	RefreshSeedPacketFromCursor();
+}
+
+void Board::FailLearningQuizPlant()
+{
+	if (!mPendingPlantQuiz.mActive)
+		return;
+
+	mPendingPlantQuiz = {};
+	// Return the seed without starting packet cooldown.
+	RefreshSeedPacketFromCursor();
+	// Penalty: lose 25 sun (or whatever remains).
+	const int aPenalty = std::min(25, mSunMoney);
+	if (aPenalty > 0)
+		mSunMoney -= aPenalty;
+	DisplayAdvice("答错了，扣除25阳光！", MessageStyle::MESSAGE_STYLE_HINT_FAST, AdviceType::ADVICE_NONE);
+}
+
+void Board::StartLearningQuizUltimate()
+{
+	mPendingUltimateQuiz.mActive = true;
+	mPendingUltimateQuiz.mType = mUltimateType;
+
+	LearningQuizDialog* aDialog = new LearningQuizDialog(mApp, LearningQuizPurpose::Ultimate);
+	LawnApp::CenterDialog(aDialog, aDialog->mWidth, aDialog->mHeight);
+	mApp->AddDialog(Dialogs::DIALOG_LEARNING_QUIZ, aDialog);
+	mApp->mWidgetManager->SetFocus(aDialog);
+}
+
+void Board::FinishLearningQuizUltimate()
+{
+	if (!mPendingUltimateQuiz.mActive)
+		return;
+
+	const UltimateType aCastType = mPendingUltimateQuiz.mType;
+	mPendingUltimateQuiz = {};
+	mUltimateNoRepeat = aCastType;
+	CastUltimate(aCastType);
+	StartUltimateCooldownAndSpin();
+}
+
+void Board::FailLearningQuizUltimate()
+{
+	if (!mPendingUltimateQuiz.mActive)
+		return;
+
+	const UltimateType aAttempted = mPendingUltimateQuiz.mType;
+	mPendingUltimateQuiz = {};
+	mUltimateNoRepeat = aAttempted;
+	// Wrong answer: no cast, but still enter cooldown.
+	StartUltimateCooldownAndSpin();
+	DisplayAdvice("答错了，大招进入冷却！", MessageStyle::MESSAGE_STYLE_HINT_FAST, AdviceType::ADVICE_NONE);
+}
+
+namespace
+{
+	constexpr int ULTIMATE_SPIN_TIME = 260;
+	constexpr int ULTIMATE_COOLDOWN_TIME = 3000; // 30 seconds @ ~100 ticks/sec
+	constexpr int ULTIMATE_LANE_SHOTS = 10;
+	constexpr int ULTIMATE_LANE_SHOT_INTERVAL = 7;
+	constexpr int ULTIMATE_COB_SHOTS = 10;
+	constexpr int ULTIMATE_COB_SHOT_INTERVAL = 18;
+	constexpr int ULTIMATE_BUTTER_SHOTS = 100; // 10x for denser butter rain
+	constexpr int ULTIMATE_BUTTER_SHOT_INTERVAL = 2;
+	constexpr int ULTIMATE_STAR_BURSTS = 80; // 10x star quantity
+	constexpr int ULTIMATE_STAR_BURST_INTERVAL = 2;
+
+	ZombieType PickHypnoAllyZombieType(Board* theBoard, int theRow)
+	{
+		const bool aPoolRow = theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_POOL;
+		PvzpWeightedArray aWeights[24];
+		int aCount = 0;
+		auto add = [&](ZombieType theType, int theWeight) {
+			if (theWeight <= 0 || aCount >= 24)
+				return;
+			if (aPoolRow)
+			{
+				if (!Zombie::ZombieTypeCanGoInPool(theType) && theType != ZombieType::ZOMBIE_BALLOON)
+					return;
+			}
+			else if (Board::IsZombieTypePoolOnly(theType))
+			{
+				return;
+			}
+			if (theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_HIGH_GROUND &&
+				!Zombie::ZombieTypeCanGoOnHighGround(theType))
+				return;
+			// Match game rule: keep gargantuars off the top row.
+			if (theRow == 0 &&
+				(theType == ZombieType::ZOMBIE_GARGANTUAR || theType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))
+				return;
+
+			aWeights[aCount].mItem = theType;
+			aWeights[aCount].mWeight = theWeight;
+			++aCount;
+		};
+
+		// Low weight for basic; high weight for elites.
+		add(ZombieType::ZOMBIE_NORMAL, 4);
+		add(ZombieType::ZOMBIE_TRAFFIC_CONE, 14);
+		add(ZombieType::ZOMBIE_POLEVAULTER, 16);
+		add(ZombieType::ZOMBIE_PAIL, 28);
+		add(ZombieType::ZOMBIE_NEWSPAPER, 16);
+		add(ZombieType::ZOMBIE_DOOR, 22);
+		add(ZombieType::ZOMBIE_FOOTBALL, 32);
+		add(ZombieType::ZOMBIE_JACK_IN_THE_BOX, 18);
+		add(ZombieType::ZOMBIE_LADDER, 18);
+		add(ZombieType::ZOMBIE_POGO, 14);
+		add(ZombieType::ZOMBIE_YETI, 12);
+		add(ZombieType::ZOMBIE_GARGANTUAR, 30);
+		add(ZombieType::ZOMBIE_REDEYE_GARGANTUAR, 16);
+		add(ZombieType::ZOMBIE_IMP, 10);
+		add(ZombieType::ZOMBIE_BALLOON, 12);
+		add(ZombieType::ZOMBIE_DANCER, 10);
+		add(ZombieType::ZOMBIE_SNORKEL, 24);
+		add(ZombieType::ZOMBIE_DOLPHIN_RIDER, 22);
+
+		if (aCount <= 0)
+			return ZombieType::ZOMBIE_NORMAL;
+		return static_cast<ZombieType>(PvzpPickFromWeightedArray(aWeights, aCount));
+	}
+
+	std::unique_ptr<MemoryImage> gUltimateLabelImage;
+
+	MemoryImage* GetUltimateLabelImage()
+	{
+		if (gUltimateLabelImage)
+			return gUltimateLabelImage.get();
+#ifdef _WIN32
+		const std::wstring aWide = L"大招";
+		HDC aScreenDC = GetDC(nullptr);
+		HDC aMemDC = CreateCompatibleDC(aScreenDC);
+		// Rounded cute Chinese face; fall back through a few system fonts.
+		HFONT aFont = CreateFontW(
+			-20, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+			GB2312_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+			FF_DONTCARE | VARIABLE_PITCH, L"Microsoft YaHei UI"
+		);
+		if (!aFont)
+			aFont = CreateFontW(-20, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"SimHei");
+		HGDIOBJ aOldFont = SelectObject(aMemDC, aFont);
+		SIZE aSize{};
+		GetTextExtentPoint32W(aMemDC, aWide.c_str(), static_cast<int>(aWide.size()), &aSize);
+		const int aPad = 6;
+		const int aWidth = std::max(1, static_cast<int>(aSize.cx) + aPad * 2);
+		const int aHeight = std::max(22, static_cast<int>(aSize.cy) + aPad);
+
+		BITMAPINFO aBmi{};
+		aBmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		aBmi.bmiHeader.biWidth = aWidth;
+		aBmi.bmiHeader.biHeight = -aHeight;
+		aBmi.bmiHeader.biPlanes = 1;
+		aBmi.bmiHeader.biBitCount = 32;
+		aBmi.bmiHeader.biCompression = BI_RGB;
+		void* aBits = nullptr;
+		HBITMAP aBitmap = CreateDIBSection(aMemDC, &aBmi, DIB_RGB_COLORS, &aBits, nullptr, 0);
+		HGDIOBJ aOldBmp = SelectObject(aMemDC, aBitmap);
+		memset(aBits, 0, static_cast<size_t>(aWidth) * static_cast<size_t>(aHeight) * 4u);
+		SetBkMode(aMemDC, TRANSPARENT);
+
+		auto drawAt = [&](int ox, int oy, COLORREF color)
+		{
+			RECT aRect{ ox, oy, aWidth + ox, aHeight + oy };
+			SetTextColor(aMemDC, color);
+			DrawTextW(aMemDC, aWide.c_str(), static_cast<int>(aWide.size()), &aRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
+		};
+		// Soft dark outline then bright candy-red fill.
+		for (int dy = -2; dy <= 2; ++dy)
+			for (int dx = -2; dx <= 2; ++dx)
+				if (dx || dy)
+					drawAt(dx, dy, RGB(90, 20, 20));
+		drawAt(0, 0, RGB(255, 255, 255));
+		drawAt(0, -1, RGB(255, 70, 70));
+
+		gUltimateLabelImage = std::make_unique<MemoryImage>(gSexyAppBase);
+		gUltimateLabelImage->Create(aWidth, aHeight);
+		uint32_t* aDest = gUltimateLabelImage->GetBits();
+		const uint32_t* aSrc = static_cast<const uint32_t*>(aBits);
+		for (int i = 0; i < aWidth * aHeight; ++i)
+		{
+			const uint32_t aPixel = aSrc[i];
+			const uint32_t aB = aPixel & 0xFFu;
+			const uint32_t aG = (aPixel >> 8) & 0xFFu;
+			const uint32_t aR = (aPixel >> 16) & 0xFFu;
+			const uint32_t aCoverage = std::max({ aR, aG, aB });
+			if (aCoverage == 0)
+			{
+				aDest[i] = 0;
+				continue;
+			}
+			// Prefer red channel for fill, keep dark outline from low RGB.
+			const bool aIsOutline = aR < 140 && aG < 80 && aB < 80;
+			const uint32_t aOutR = aIsOutline ? 70u : 255u;
+			const uint32_t aOutG = aIsOutline ? 18u : 55u;
+			const uint32_t aOutB = aIsOutline ? 18u : 55u;
+			aDest[i] = (aCoverage << 24) | (aOutR << 16) | (aOutG << 8) | aOutB;
+		}
+		gUltimateLabelImage->BitsChanged();
+		gUltimateLabelImage->mHasAlpha = true;
+		gUltimateLabelImage->mHasTrans = true;
+
+		SelectObject(aMemDC, aOldBmp);
+		SelectObject(aMemDC, aOldFont);
+		DeleteObject(aBitmap);
+		DeleteObject(aFont);
+		DeleteDC(aMemDC);
+		ReleaseDC(nullptr, aScreenDC);
+#endif
+		return gUltimateLabelImage.get();
+	}
+}
+
+bool Board::ShouldShowUltimateButton() const
+{
+	if (!mApp)
+		return false;
+	if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN ||
+		mApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM ||
+		mApp->mGameMode == GameMode::GAMEMODE_UPSELL ||
+		mApp->mGameMode == GameMode::GAMEMODE_INTRO)
+		return false;
+	return true;
+}
+
+bool Board::IsPlayablePlantRow(int theRow) const
+{
+	return theRow >= 0 && theRow < MAX_GRID_SIZE_Y && mPlantRow[theRow] != PlantRowType::PLANTROW_DIRT;
+}
+
+SeedType Board::GetUltimateSeedIcon(UltimateType theType) const
+{
+	switch (theType)
+	{
+	case UltimateType::ULTIMATE_SUN_GEYSER: return SeedType::SEED_SUNFLOWER;
+	case UltimateType::ULTIMATE_PEA_BARRAGE: return SeedType::SEED_PEASHOOTER;
+	case UltimateType::ULTIMATE_JALAPENO_ALL: return SeedType::SEED_JALAPENO;
+	case UltimateType::ULTIMATE_POTATO_MINES: return SeedType::SEED_POTATOMINE;
+	case UltimateType::ULTIMATE_HYPNO_ALLIES: return SeedType::SEED_HYPNOSHROOM;
+	case UltimateType::ULTIMATE_BUTTER_RAIN: return SeedType::SEED_KERNELPULT;
+	case UltimateType::ULTIMATE_SQUASH_LINE: return SeedType::SEED_SQUASH;
+	case UltimateType::ULTIMATE_STAR_STORM: return SeedType::SEED_STARFRUIT;
+	case UltimateType::ULTIMATE_CACTUS_SPIKES: return SeedType::SEED_CACTUS;
+	case UltimateType::ULTIMATE_COB_BARRAGE: return SeedType::SEED_COBCANNON;
+	default: return SeedType::SEED_PEASHOOTER;
+	}
+}
+
+UltimateType Board::PickRandomUltimateType(UltimateType theAvoid) const
+{
+	const int aCount = static_cast<int>(UltimateType::NUM_ULTIMATE_TYPES);
+	if (aCount <= 1)
+		return UltimateType::ULTIMATE_SUN_GEYSER;
+
+	UltimateType aType = static_cast<UltimateType>(Rand(aCount));
+	if (aType == theAvoid)
+		aType = static_cast<UltimateType>((static_cast<int>(aType) + 1 + Rand(aCount - 1)) % aCount);
+	return aType;
+}
+
+	void Board::InitUltimateAbility()
+	{
+		mUltimateNoRepeat = UltimateType::NUM_ULTIMATE_TYPES;
+		mUltimateType = PickRandomUltimateType();
+		mUltimateSpinNext = PickRandomUltimateType(mUltimateType);
+		mUltimateSpinPosition = 0.0f;
+		mUltimateSpinCountDown = 0;
+		mUltimateBarrageLeft = 0;
+		mUltimateBarrageTimer = 0;
+		mUltimateBarrageIndex = 0;
+		mUltimateBarrageType = UltimateType::NUM_ULTIMATE_TYPES;
+		// Each new game/level starts with ultimate on cooldown.
+		mUltimateReady = false;
+		mUltimateRefreshing = true;
+		mUltimateRefreshCounter = 0;
+		mUltimateRefreshTime = ULTIMATE_COOLDOWN_TIME;
+		if (mUltimateButton)
+		{
+			mUltimateButton->mBtnNoDraw = !ShouldShowUltimateButton();
+			mUltimateButton->mDisabled = !ShouldShowUltimateButton();
+		}
+	}
+
+void Board::StartUltimateCooldownAndSpin()
+{
+	mUltimateReady = false;
+	mUltimateRefreshing = true;
+	mUltimateRefreshCounter = 0;
+	mUltimateRefreshTime = ULTIMATE_COOLDOWN_TIME;
+	mUltimateSpinCountDown = ULTIMATE_SPIN_TIME;
+	mUltimateSpinPosition = 0.0f;
+	mUltimateSpinNext = PickRandomUltimateType(mUltimateNoRepeat);
+}
+
+void Board::UpdateUltimateAbility()
+{
+	if (!ShouldShowUltimateButton())
+		return;
+
+	mUltimateButton->mX = mMenuButton->mX + (mMenuButton->mWidth - SEED_PACKET_WIDTH) / 2;
+	mUltimateButton->mY = mMenuButton->mY + mMenuButton->mHeight + 6;
+	mUltimateButton->Update();
+
+	if (mUltimateRefreshing)
+	{
+		mUltimateRefreshCounter++;
+		if (mUltimateRefreshCounter >= mUltimateRefreshTime)
+		{
+			mUltimateRefreshCounter = 0;
+			mUltimateRefreshing = false;
+			mUltimateReady = true;
+			mApp->AddPvzpParticle(
+				mUltimateButton->mX,
+				mUltimateButton->mY,
+				MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0),
+				ParticleEffect::PARTICLE_SEED_PACKET_FLASH
+			);
+			mApp->PlaySample(Sexy::SOUND_LOADINGBAR_FLOWER);
+		}
+	}
+
+	if (mUltimateSpinCountDown > 0)
+	{
+		mUltimateSpinCountDown--;
+		const float aFlips = PvzpAnimateCurveFloat(ULTIMATE_SPIN_TIME, 0, mUltimateSpinCountDown, 8.0f, 1.2f, PvzpCurves::CURVE_LINEAR);
+		mUltimateSpinPosition += aFlips * 0.01f;
+		if (mUltimateSpinPosition >= 1.0f)
+		{
+			mUltimateType = mUltimateSpinNext;
+			mUltimateSpinPosition = 0.0f;
+			if (mUltimateSpinCountDown > 0)
+				mUltimateSpinNext = PickRandomUltimateType(mUltimateNoRepeat);
+		}
+		if (mUltimateSpinCountDown == 0)
+		{
+			mUltimateType = mUltimateSpinNext;
+			mUltimateSpinPosition = 0.0f;
+			mApp->PlaySample(Sexy::SOUND_POINTS);
+		}
+	}
+
+	UpdateUltimateBarrage();
+}
+
+void Board::FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags)
+{
+	mApp->PlayFoley(FoleyType::FOLEY_THROW);
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+
+		const int aY = GridToPixelY(0, aRow) + (theType == ProjectileType::PROJECTILE_SPIKE ? -20 : 5);
+		const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
+		Projectile* aProj = AddProjectile(10, aY, aRenderOrder, aRow, theType);
+		aProj->mDamageRangeFlags = theDamageFlags;
+	}
+}
+
+void Board::FireUltimateCobShot(int theShotIndex)
+{
+	mApp->PlayFoley(FoleyType::FOLEY_COB_LAUNCH);
+	const float aTargetX = 80.0f + theShotIndex * ((BOARD_WIDTH - 160.0f) / std::max(1, ULTIMATE_COB_SHOTS - 1));
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+
+		const int aOriginX = BOARD_WIDTH / 2 - 20;
+		const int aOriginY = GridToPixelY(4, aRow) - 40;
+		const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
+		Projectile* aCob = AddProjectile(aOriginX, aOriginY, aRenderOrder, aRow, ProjectileType::PROJECTILE_COBBIG);
+		aCob->mDamageRangeFlags = 127;
+		aCob->mVelX = 0.001f;
+		aCob->mVelY = 0.0f;
+		aCob->mAccZ = 0.0f;
+		aCob->mVelZ = -8.0f;
+		aCob->mMotionType = ProjectileMotion::MOTION_LOBBED;
+		aCob->mCobTargetX = aTargetX - 40.0f;
+		aCob->mCobTargetRow = aRow;
+	}
+	ShakeBoard(1, -2);
+}
+
+void Board::FireUltimateButterShot(int theShotIndex)
+{
+	mApp->PlayFoley(FoleyType::FOLEY_THROW);
+	const float aTargetX = 60.0f + RandRangeInt(0, BOARD_WIDTH - 120);
+	const int aRow = [&]() {
+		std::vector<int> aRows;
+		for (int r = 0; r < MAX_GRID_SIZE_Y; ++r)
+			if (IsPlayablePlantRow(r))
+				aRows.push_back(r);
+		if (aRows.empty())
+			return 0;
+		return aRows[Rand(static_cast<int>(aRows.size()))];
+	}();
+
+	const int aOriginX = BOARD_WIDTH / 2 + RandRangeInt(-40, 40);
+	const int aOriginY = 40 + (theShotIndex % 3) * 12;
+	const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
+	Projectile* aButter = AddProjectile(aOriginX, aOriginY, aRenderOrder, aRow, ProjectileType::PROJECTILE_BUTTER);
+	aButter->mDamageRangeFlags = 13;
+	const float aRangeX = aTargetX - aOriginX;
+	const float aRangeY = static_cast<float>(GridToPixelY(0, aRow) - aOriginY);
+	aButter->mMotionType = ProjectileMotion::MOTION_LOBBED;
+	aButter->mVelX = aRangeX / 120.0f;
+	aButter->mVelY = 0.0f;
+	aButter->mVelZ = aRangeY / 120.0f - 7.0f;
+	aButter->mAccZ = 0.115f;
+}
+
+void Board::FireUltimateStarBurst()
+{
+	mApp->PlayFoley(FoleyType::FOLEY_THROW);
+	const float aCenterX = BOARD_WIDTH / 2.0f + RandRangeFloat(-80.0f, 80.0f);
+	const float aCenterY = BOARD_HEIGHT / 2.0f + RandRangeFloat(-60.0f, 40.0f);
+	const int aRow = std::clamp(PixelToGridYKeepOnBoard(static_cast<int>(aCenterX), static_cast<int>(aCenterY)), 0, MAX_GRID_SIZE_Y - 1);
+	const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
+
+	const float aShootAngleX = cos(DEG_TO_RAD(30.0f)) * 3.33f;
+	const float aShootAngleY = sin(DEG_TO_RAD(30.0f)) * 3.33f;
+	for (int i = 0; i < 5; ++i)
+	{
+		Projectile* aStar = AddProjectile(static_cast<int>(aCenterX), static_cast<int>(aCenterY), aRenderOrder, aRow, ProjectileType::PROJECTILE_STAR);
+		aStar->mDamageRangeFlags = 1;
+		aStar->mMotionType = ProjectileMotion::MOTION_STAR;
+		switch (i)
+		{
+		case 0: aStar->mVelX = -3.33f; aStar->mVelY = 0.0f; break;
+		case 1: aStar->mVelX = 0.0f; aStar->mVelY = 3.33f; break;
+		case 2: aStar->mVelX = 0.0f; aStar->mVelY = -3.33f; break;
+		case 3: aStar->mVelX = aShootAngleX; aStar->mVelY = aShootAngleY; break;
+		case 4: aStar->mVelX = aShootAngleX; aStar->mVelY = -aShootAngleY; break;
+		default: break;
+		}
+	}
+}
+
+void Board::UpdateUltimateBarrage()
+{
+	if (mUltimateBarrageLeft <= 0)
+		return;
+
+	if (mUltimateBarrageTimer > 0)
+	{
+		--mUltimateBarrageTimer;
+		return;
+	}
+
+	switch (mUltimateBarrageType)
+	{
+	case UltimateType::ULTIMATE_PEA_BARRAGE:
+		FireUltimateLaneProjectile(ProjectileType::PROJECTILE_PEA, 1);
+		mUltimateBarrageTimer = ULTIMATE_LANE_SHOT_INTERVAL;
+		break;
+	case UltimateType::ULTIMATE_CACTUS_SPIKES:
+		FireUltimateLaneProjectile(ProjectileType::PROJECTILE_SPIKE, 2);
+		mUltimateBarrageTimer = ULTIMATE_LANE_SHOT_INTERVAL;
+		break;
+	case UltimateType::ULTIMATE_COB_BARRAGE:
+		FireUltimateCobShot(mUltimateBarrageIndex);
+		++mUltimateBarrageIndex;
+		mUltimateBarrageTimer = ULTIMATE_COB_SHOT_INTERVAL;
+		break;
+	case UltimateType::ULTIMATE_BUTTER_RAIN:
+		FireUltimateButterShot(mUltimateBarrageIndex);
+		++mUltimateBarrageIndex;
+		mUltimateBarrageTimer = ULTIMATE_BUTTER_SHOT_INTERVAL;
+		break;
+	case UltimateType::ULTIMATE_STAR_STORM:
+		FireUltimateStarBurst();
+		mUltimateBarrageTimer = ULTIMATE_STAR_BURST_INTERVAL;
+		break;
+	default:
+		mUltimateBarrageLeft = 0;
+		return;
+	}
+
+	--mUltimateBarrageLeft;
+}
+
+void Board::DrawUltimateButton(Graphics* g)
+{
+	if (!ShouldShowUltimateButton() || mUltimateButton->mBtnNoDraw)
+		return;
+
+	const int aX = mUltimateButton->mX;
+	const int aY = mUltimateButton->mY;
+
+	float aPercentDark = 0.0f;
+	if (!mUltimateReady && mUltimateRefreshTime > 0)
+		aPercentDark = static_cast<float>(mUltimateRefreshTime - mUltimateRefreshCounter) / static_cast<float>(mUltimateRefreshTime);
+
+	int aGrayness = 255;
+	if (mApp->mGameScene != GameScenes::SCENE_PLAYING)
+		aGrayness = 160;
+	else if (!mUltimateReady)
+		aGrayness = 200;
+
+	if (mUltimateSpinCountDown > 0)
+	{
+		const int aOffsetY = FloatRoundToInt(-SEED_PACKET_HEIGHT * mUltimateSpinPosition);
+		Graphics aClipG(*g);
+		aClipG.ClipRect(aX, aY, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT);
+		DrawSeedPacket(&aClipG, static_cast<float>(aX), static_cast<float>(aY + aOffsetY), GetUltimateSeedIcon(mUltimateType), SeedType::SEED_NONE, 0.0f, 180, false, false);
+		DrawSeedPacket(&aClipG, static_cast<float>(aX), static_cast<float>(aY + SEED_PACKET_HEIGHT + aOffsetY), GetUltimateSeedIcon(mUltimateSpinNext), SeedType::SEED_NONE, 0.0f, 180, false, false);
+	}
+	else
+	{
+		DrawSeedPacket(g, static_cast<float>(aX), static_cast<float>(aY), GetUltimateSeedIcon(mUltimateType), SeedType::SEED_NONE, aPercentDark, aGrayness, false, false);
+	}
+
+	if (MemoryImage* aLabel = GetUltimateLabelImage())
+	{
+		g->DrawImage(aLabel, aX + (SEED_PACKET_WIDTH - aLabel->mWidth) / 2, aY + SEED_PACKET_HEIGHT - aLabel->mHeight - 2);
+	}
+	else
+	{
+		PvzpDrawString(g, "ULT", aX + SEED_PACKET_WIDTH / 2, aY + SEED_PACKET_HEIGHT - 8, FONT_PICO129, Color(255, 55, 55), DS_ALIGN_CENTER);
+	}
+
+	if (mUltimateReady && mUltimateButton->mIsOver && mApp->mGameScene == GameScenes::SCENE_PLAYING)
+	{
+		g->SetColor(Color(255, 255, 180, 60));
+		g->FillRect(aX, aY, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT);
+	}
+}
+
+bool Board::IsUltimateButtonMouseOver() const
+{
+	return ShouldShowUltimateButton() && mUltimateButton && mUltimateButton->IsMouseOver();
+}
+
+	void Board::TryActivateUltimate()
+	{
+		if (!ShouldShowUltimateButton())
+			return;
+		if (mApp->mGameScene != GameScenes::SCENE_PLAYING)
+			return;
+		if (!mUltimateReady || mUltimateSpinCountDown > 0 || mUltimateRefreshing)
+			return;
+		if (mApp->GetDialog(Dialogs::DIALOG_LEARNING_QUIZ) != nullptr)
+			return;
+		if (mPendingUltimateQuiz.mActive)
+			return;
+
+		// Always require a quiz before casting an ultimate.
+		StartLearningQuizUltimate();
+	}
+
+void Board::CastUltimate(UltimateType theType)
+{
+	switch (theType)
+	{
+	case UltimateType::ULTIMATE_SUN_GEYSER: CastSunGeyserUltimate(); break;
+	case UltimateType::ULTIMATE_PEA_BARRAGE: CastPeaBarrageUltimate(); break;
+	case UltimateType::ULTIMATE_JALAPENO_ALL: CastJalapenoAllUltimate(); break;
+	case UltimateType::ULTIMATE_POTATO_MINES: CastPotatoMinesUltimate(); break;
+	case UltimateType::ULTIMATE_HYPNO_ALLIES: CastHypnoAlliesUltimate(); break;
+	case UltimateType::ULTIMATE_BUTTER_RAIN: CastButterRainUltimate(); break;
+	case UltimateType::ULTIMATE_SQUASH_LINE: CastSquashLineUltimate(); break;
+	case UltimateType::ULTIMATE_STAR_STORM: CastStarStormUltimate(); break;
+	case UltimateType::ULTIMATE_CACTUS_SPIKES: CastCactusSpikesUltimate(); break;
+	case UltimateType::ULTIMATE_COB_BARRAGE: CastCobBarrageUltimate(); break;
+	default: break;
+	}
+}
+
+void Board::CastSunGeyserUltimate()
+{
+	mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
+	const int aCenterX = BOARD_WIDTH / 2;
+	const int aCenterY = BOARD_HEIGHT / 2 - 20;
+	for (int i = 0; i < 10; ++i)
+	{
+		const int aX = aCenterX + RandRangeInt(-40, 40);
+		const int aY = aCenterY + RandRangeInt(-30, 30);
+		AddCoin(aX, aY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+	}
+	ShakeBoard(2, -3);
+}
+
+void Board::CastPeaBarrageUltimate()
+{
+	mUltimateBarrageType = UltimateType::ULTIMATE_PEA_BARRAGE;
+	mUltimateBarrageLeft = ULTIMATE_LANE_SHOTS;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	UpdateUltimateBarrage();
+}
+
+void Board::UltimateBurnRow(int theRow)
+{
+	constexpr int aJalapenoFlags = 127;
+	for (Zombie* aZombie : mZombies)
+	{
+		if (aZombie->mDead)
+			continue;
+		if ((aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mRow == theRow) && aZombie->EffectedByDamage(aJalapenoFlags))
+		{
+			aZombie->RemoveColdEffects();
+			aZombie->ApplyBurn();
+		}
+	}
+
+	for (GridItem* aGridItem : mGridItems)
+	{
+		if (aGridItem->mDead)
+			continue;
+		if (aGridItem->mGridY == theRow && aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER)
+			aGridItem->GridItemDie();
+	}
+
+	if (Zombie* aBoss = GetBossZombie())
+	{
+		if (aBoss->mFireballRow == theRow)
+			aBoss->BossDestroyIceballInRow();
+	}
+}
+
+void Board::CastJalapenoAllUltimate()
+{
+	mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE);
+	mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+	ShakeBoard(3, -4);
+
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+		DoFwoosh(aRow);
+		UltimateBurnRow(aRow);
+		mIceTimer[aRow] = 20;
+	}
+}
+
+void Board::ArmPotatoMineInstant(Plant* thePlant)
+{
+	if (!thePlant)
+		return;
+	thePlant->mStateCountdown = 0;
+	thePlant->mState = PlantState::STATE_POTATO_ARMED;
+	if (Reanimation* aBody = mApp->ReanimationTryToGet(thePlant->mBodyReanimID))
+	{
+		aBody->SetFramesForLayer("anim_armed");
+		aBody->mAnimRate = 12.0f;
+	}
+}
+
+void Board::CastPotatoMinesUltimate()
+{
+	mApp->PlaySample(SOUND_PLANT);
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+
+		std::vector<int> aEmptyCols;
+		for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
+		{
+			if (CanPlantAt(aCol, aRow, SeedType::SEED_POTATOMINE) == PlantingReason::PLANTING_OK)
+				aEmptyCols.push_back(aCol);
+		}
+
+		for (int n = 0; n < 2 && !aEmptyCols.empty(); ++n)
+		{
+			const int aPick = Rand(static_cast<int>(aEmptyCols.size()));
+			const int aCol = aEmptyCols[aPick];
+			aEmptyCols.erase(aEmptyCols.begin() + aPick);
+			Plant* aMine = AddPlant(aCol, aRow, SeedType::SEED_POTATOMINE);
+			ArmPotatoMineInstant(aMine);
+		}
+	}
+}
+
+void Board::CastHypnoAlliesUltimate()
+{
+	mApp->PlaySample(SOUND_MINDCONTROLLED);
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+
+		const ZombieType aType = PickHypnoAllyZombieType(this, aRow);
+		Zombie* aZombie = AddZombieInRow(aType, aRow, -1);
+		if (!aZombie)
+			continue;
+		aZombie->mPosX = -40.0f;
+		aZombie->mX = static_cast<int>(aZombie->mPosX);
+		aZombie->StartMindControlled();
+		aZombie->mVelX = 0.17f;
+		mApp->AddPvzpParticle(aZombie->mPosX + 60.0f, aZombie->mPosY + 40.0f, aZombie->mRenderOrder + 1, ParticleEffect::PARTICLE_MIND_CONTROL);
+	}
+}
+
+void Board::CastButterRainUltimate()
+{
+	mUltimateBarrageType = UltimateType::ULTIMATE_BUTTER_RAIN;
+	mUltimateBarrageLeft = ULTIMATE_BUTTER_SHOTS;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	UpdateUltimateBarrage();
+}
+
+int Board::FindRightmostEmptyCol(int theRow, SeedType theSeedType)
+{
+	for (int aCol = MAX_GRID_SIZE_X - 1; aCol >= 0; --aCol)
+	{
+		if (CanPlantAt(aCol, theRow, theSeedType) == PlantingReason::PLANTING_OK)
+			return aCol;
+	}
+	return -1;
+}
+
+void Board::CastSquashLineUltimate()
+{
+	mApp->PlayFoley(FoleyType::FOLEY_PLANT);
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+		const int aCol = FindRightmostEmptyCol(aRow, SeedType::SEED_SQUASH);
+		if (aCol >= 0)
+			AddPlant(aCol, aRow, SeedType::SEED_SQUASH);
+	}
+}
+
+void Board::CastStarStormUltimate()
+{
+	mUltimateBarrageType = UltimateType::ULTIMATE_STAR_STORM;
+	mUltimateBarrageLeft = ULTIMATE_STAR_BURSTS;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	UpdateUltimateBarrage();
+}
+
+void Board::CastCactusSpikesUltimate()
+{
+	mUltimateBarrageType = UltimateType::ULTIMATE_CACTUS_SPIKES;
+	mUltimateBarrageLeft = ULTIMATE_LANE_SHOTS;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	UpdateUltimateBarrage();
+}
+
+void Board::CastCobBarrageUltimate()
+{
+	mUltimateBarrageType = UltimateType::ULTIMATE_COB_BARRAGE;
+	mUltimateBarrageLeft = ULTIMATE_COB_SHOTS;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	UpdateUltimateBarrage();
 }
 
 Plant* Board::ToolHitTestHelper(const HitResult* theHitResult)
@@ -4377,6 +5209,10 @@ void Board::MouseDown(int x, int y, int theClickCount)
 	{
 		mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
 	}
+	else if (IsUltimateButtonMouseOver() && CanInteractWithBoardButtons() && theClickCount > 0)
+	{
+		mApp->PlaySample(Sexy::SOUND_TAP);
+	}
 	else if (mStoreButton && mStoreButton->IsMouseOver() && CanInteractWithBoardButtons() && theClickCount > 0)
 	{
 		if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || mApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM)
@@ -4612,6 +5448,10 @@ void Board::MouseUp(int x, int y, int theClickCount)
 				mApp->mBoardResult = BoardResult::BOARDRESULT_QUIT;
 				mApp->DoBackToMain();
 			}
+		}
+		else if (IsUltimateButtonMouseOver() && !mApp->GetDialog(Dialogs::DIALOG_GAME_OVER) && !mApp->GetDialog(Dialogs::DIALOG_LEVEL_COMPLETE))
+		{
+			TryActivateUltimate();
 		}
 		else if(mStoreButton && mStoreButton->IsMouseOver())
 		{
@@ -5727,6 +6567,11 @@ void Board::Update()
 	{
 		mStoreButton->mDisabled = aDisabled;
 		mStoreButton->Update();
+	}
+	if (mUltimateButton)
+	{
+		mUltimateButton->mDisabled = aDisabled || !mUltimateReady || mUltimateSpinCountDown > 0 || mUltimateRefreshing;
+		UpdateUltimateAbility();
 	}
 
 	mApp->mEffectSystem->Update();
@@ -7131,6 +7976,7 @@ void Board::DrawTopRightUI(Graphics* g)
 	}
 	mMenuButton->Draw(g);
 	g->SetColorizeImages(false);
+	DrawUltimateButton(g);
 
 	if (mStoreButton && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_LAST_STAND)
 	{

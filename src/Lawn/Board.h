@@ -124,6 +124,21 @@ struct BungeeDropGrid
 	int								mGridArrayCount;
 };
 
+struct PendingPlantQuiz
+{
+	bool							mActive = false;
+	int								mPixelX = 0;
+	int								mPixelY = 0;
+	int								mGridX = 0;
+	int								mGridY = 0;
+};
+
+struct PendingUltimateQuiz
+{
+	bool							mActive = false;
+	UltimateType					mType = UltimateType::ULTIMATE_SUN_GEYSER;
+};
+
 class Board : public Widget, public ButtonListener
 {
 public:
@@ -140,11 +155,28 @@ public:
 	std::unique_ptr<SeedBank>			mSeedBank;
 	std::unique_ptr<GameButton>			mMenuButton;
 	std::unique_ptr<GameButton>			mStoreButton;
+	std::unique_ptr<GameButton>			mUltimateButton;
+	UltimateType					mUltimateType = UltimateType::ULTIMATE_SUN_GEYSER;
+	UltimateType					mUltimateSpinNext = UltimateType::ULTIMATE_SUN_GEYSER;
+	UltimateType					mUltimateNoRepeat = UltimateType::NUM_ULTIMATE_TYPES;
+	float							mUltimateSpinPosition = 0.0f;
+	int								mUltimateSpinCountDown = 0;
+	int								mUltimateRefreshCounter = 0;
+	int								mUltimateRefreshTime = 0;
+	bool							mUltimateRefreshing = false;
+	bool							mUltimateReady = true;
+	int								mUltimateBarrageLeft = 0;
+	int								mUltimateBarrageTimer = 0;
+	int								mUltimateBarrageIndex = 0;
+	UltimateType					mUltimateBarrageType = UltimateType::NUM_ULTIMATE_TYPES;
 	bool							mIgnoreMouseUp;
 	std::unique_ptr<ToolTipWidget>		mToolTip;
 	std::unique_ptr<CutScene>			mCutScene;
 	std::unique_ptr<Challenge>			mChallenge;
 	bool							mPaused;
+	PendingPlantQuiz				mPendingPlantQuiz;
+	PendingUltimateQuiz				mPendingUltimateQuiz;
+	bool							mLearningQuizBypass = false;
 	GridSquareType					mGridSquareType[MAX_GRID_SIZE_X][MAX_GRID_SIZE_Y];
 	int32_t							mGridCelLook[MAX_GRID_SIZE_X][MAX_GRID_SIZE_Y];
 	int32_t							mGridCelOffset[MAX_GRID_SIZE_X][MAX_GRID_SIZE_Y][2];
@@ -323,6 +355,43 @@ public:
 	bool							MouseHitTest(int x, int y, HitResult* theHitResult);
 	void							MouseDownWithPlant(int x, int y, int theClickCount);
 	void							MouseDownWithTool(int x, int y, int theClickCount, CursorType theCursorType);
+	bool							ShouldAskLearningQuiz() const;
+	void							StartLearningQuizPlant(int thePixelX, int thePixelY, int theGridX, int theGridY);
+	void							FinishLearningQuizPlant();
+	void							CancelLearningQuizPlant();
+	void							FailLearningQuizPlant();
+	void							StartLearningQuizUltimate();
+	void							FinishLearningQuizUltimate();
+	void							FailLearningQuizUltimate();
+	bool							ShouldShowUltimateButton() const;
+	SeedType						GetUltimateSeedIcon(UltimateType theType) const;
+	UltimateType					PickRandomUltimateType(UltimateType theAvoid = UltimateType::NUM_ULTIMATE_TYPES) const;
+	void							InitUltimateAbility();
+	void							UpdateUltimateAbility();
+	void							DrawUltimateButton(Graphics* g);
+	bool							IsUltimateButtonMouseOver() const;
+	void							TryActivateUltimate();
+	void							StartUltimateCooldownAndSpin();
+	void							CastUltimate(UltimateType theType);
+	void							CastSunGeyserUltimate();
+	void							CastPeaBarrageUltimate();
+	void							CastJalapenoAllUltimate();
+	void							CastPotatoMinesUltimate();
+	void							CastHypnoAlliesUltimate();
+	void							CastButterRainUltimate();
+	void							CastSquashLineUltimate();
+	void							CastStarStormUltimate();
+	void							CastCactusSpikesUltimate();
+	void							CastCobBarrageUltimate();
+	void							UltimateBurnRow(int theRow);
+	void							UpdateUltimateBarrage();
+	void							FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags);
+	void							FireUltimateCobShot(int theShotIndex);
+	void							FireUltimateButterShot(int theShotIndex);
+	void							FireUltimateStarBurst();
+	void							ArmPotatoMineInstant(Plant* thePlant);
+	bool							IsPlayablePlantRow(int theRow) const;
+	int								FindRightmostEmptyCol(int theRow, SeedType theSeedType);
 //	inline void						MouseDownNormal(int x, int y, int theClickCount) { /* not found */; }
 	bool							CanInteractWithBoardButtons();
 	void							DrawProgressMeter(Graphics* g);

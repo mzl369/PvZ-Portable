@@ -1,0 +1,3285 @@
+{
+  "meta": {
+    "stage": "primary",
+    "subject": "math",
+    "volume": "upper",
+    "textbook": "北师大版",
+    "grade": 1,
+    "count": 99,
+    "exported_at": "2026-09-24T16:28:08.692Z"
+  },
+  "questions": [
+    {
+      "id": "q_001a2b3c4d5e6",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "lesson": 1,
+      "knowledge_point": "数一数",
+      "tags": [
+        "数数"
+      ],
+      "stem": "一个苹果、一个梨、一个桃子，一共有几个水果？",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.185Z",
+      "updated_at": "2026-09-24T16:27:42.185Z"
+    },
+    {
+      "id": "q_002f7g8h9i0j1k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 1,
+      "knowledge_point": "认识1-5",
+      "tags": [
+        "数的顺序"
+      ],
+      "stem": "数字3前面的一个数是几？",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.218Z",
+      "updated_at": "2026-09-24T16:27:42.218Z"
+    },
+    {
+      "id": "q_003l2m3n4o5p6q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 2,
+      "knowledge_point": "认识0",
+      "tags": [
+        "0的认识"
+      ],
+      "stem": "一个也没有，用哪个数字表示？",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "answer": "A",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.247Z",
+      "updated_at": "2026-09-24T16:27:42.247Z"
+    },
+    {
+      "id": "q_004r8s9t0u1v2w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 3,
+      "knowledge_point": "10以内数的大小比较",
+      "tags": [
+        "比大小"
+      ],
+      "stem": "在4和6中，较大的数是几？",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.276Z",
+      "updated_at": "2026-09-24T16:27:42.276Z"
+    },
+    {
+      "id": "q_005x3y4z5a6b7c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 2,
+      "lesson": 1,
+      "knowledge_point": "比多少",
+      "tags": [
+        "比较"
+      ],
+      "stem": "有3只小兔，5根胡萝卜，小兔比胡萝卜少几？",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.307Z",
+      "updated_at": "2026-09-24T16:27:42.307Z"
+    },
+    {
+      "id": "q_006d8e9f0g1h2i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 1,
+      "knowledge_point": "5以内加法",
+      "tags": [
+        "加法"
+      ],
+      "stem": "2+1等于几？",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.336Z",
+      "updated_at": "2026-09-24T16:27:42.336Z"
+    },
+    {
+      "id": "q_007j3k4l5m6n7o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "认识整时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "钟面上时针指向3，分针指向12，是几时？",
+      "options": [
+        "3时",
+        "6时",
+        "9时",
+        "12时"
+      ],
+      "answer": "A",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.367Z",
+      "updated_at": "2026-09-24T16:27:42.367Z"
+    },
+    {
+      "id": "q_008p8q9r0s1t2u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 4,
+      "knowledge_point": "几和第几",
+      "tags": [
+        "序数"
+      ],
+      "stem": "排队时，小明排在第4，他前面有几人？",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.400Z",
+      "updated_at": "2026-09-24T16:27:42.400Z"
+    },
+    {
+      "id": "q_009v3w4x5y6z7a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 2,
+      "knowledge_point": "10以内减法",
+      "tags": [
+        "减法"
+      ],
+      "stem": "7-4等于几？",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.433Z",
+      "updated_at": "2026-09-24T16:27:42.433Z"
+    },
+    {
+      "id": "q_010b8c9d0e1f2g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 3,
+      "knowledge_point": "连加",
+      "tags": [
+        "连加"
+      ],
+      "stem": "1+2+3等于几？",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.461Z",
+      "updated_at": "2026-09-24T16:27:42.461Z"
+    },
+    {
+      "id": "q_011h3i4j5k6l7m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后",
+      "tags": [
+        "位置"
+      ],
+      "stem": "小华前面有2人，后面有3人，这一队一共有几人？",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.491Z",
+      "updated_at": "2026-09-24T16:27:42.491Z"
+    },
+    {
+      "id": "q_012n8o9p0q1r2s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "认识立体图形",
+      "tags": [
+        "图形"
+      ],
+      "stem": "像皮球一样的立体图形叫什么？",
+      "options": [
+        "正方体",
+        "长方体",
+        "圆柱",
+        "球"
+      ],
+      "answer": "D",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.524Z",
+      "updated_at": "2026-09-24T16:27:42.524Z"
+    },
+    {
+      "id": "q_013t3u4v5w6x7y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "11-20各数的认识",
+      "tags": [
+        "数的组成"
+      ],
+      "stem": "15里面有几个十和几个一？",
+      "options": [
+        "1个十和5个一",
+        "5个十和1个一",
+        "1个十和4个一",
+        "2个十和5个一"
+      ],
+      "answer": "A",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.558Z",
+      "updated_at": "2026-09-24T16:27:42.558Z"
+    },
+    {
+      "id": "q_014z8a9b0c1d2e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 2,
+      "knowledge_point": "20以内不进位加法",
+      "tags": [
+        "加法"
+      ],
+      "stem": "10+5等于几？",
+      "options": [
+        "5",
+        "10",
+        "15",
+        "20"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.592Z",
+      "updated_at": "2026-09-24T16:27:42.592Z"
+    },
+    {
+      "id": "q_015f3g4h5i6j7k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 4,
+      "knowledge_point": "加减混合",
+      "tags": [
+        "混合运算"
+      ],
+      "stem": "8-3+2等于几？",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.625Z",
+      "updated_at": "2026-09-24T16:27:42.625Z"
+    },
+    {
+      "id": "q_016l8m9n0o1p2q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 2,
+      "knowledge_point": "左右",
+      "tags": [
+        "位置推理"
+      ],
+      "stem": "从左数，苹果是第2个；从右数，苹果是第3个。这一排一共有几个水果？",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.660Z",
+      "updated_at": "2026-09-24T16:27:42.660Z"
+    },
+    {
+      "id": "q_017r3s4t5u6v7w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "20以内进位加法",
+      "tags": [
+        "进位加法"
+      ],
+      "stem": "9+6等于几？",
+      "options": [
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.694Z",
+      "updated_at": "2026-09-24T16:27:42.694Z"
+    },
+    {
+      "id": "q_018x8y9z0a1b2c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "认识半时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "钟面上时针在7和8之间，分针指向6，是几时半？",
+      "options": [
+        "6时半",
+        "7时半",
+        "8时半",
+        "12时半"
+      ],
+      "answer": "B",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.726Z",
+      "updated_at": "2026-09-24T16:27:42.726Z"
+    },
+    {
+      "id": "q_019d3e4f5g6h7i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 4,
+      "lesson": 1,
+      "knowledge_point": "分类标准",
+      "tags": [
+        "分类"
+      ],
+      "stem": "下面哪个不是同一类？苹果、香蕉、白菜、梨",
+      "options": [
+        "苹果",
+        "香蕉",
+        "白菜",
+        "梨"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.762Z",
+      "updated_at": "2026-09-24T16:27:42.762Z"
+    },
+    {
+      "id": "q_020j8k9l0m1n2o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "single",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 4,
+      "knowledge_point": "20以内减法",
+      "tags": [
+        "减法应用"
+      ],
+      "stem": "小明有12张卡片，送出2张，还剩几张？",
+      "options": [
+        "8",
+        "9",
+        "10",
+        "11"
+      ],
+      "answer": "C",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.800Z",
+      "updated_at": "2026-09-24T16:27:42.800Z"
+    },
+    {
+      "id": "q_021p3q4r5s6t7u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 1,
+      "knowledge_point": "5以内加减法",
+      "tags": [
+        "加法",
+        "减法"
+      ],
+      "stem": "哪些算式得数是2？",
+      "options": [
+        "1+1",
+        "2+0",
+        "3-1",
+        "1+2"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "explanation": "",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.836Z",
+      "updated_at": "2026-09-24T16:27:42.836Z"
+    },
+    {
+      "id": "q_022v8w9x0y1z2a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 3,
+      "knowledge_point": "10以内数的大小比较",
+      "tags": [
+        "比大小"
+      ],
+      "stem": "哪些数字比5小？",
+      "options": [
+        "3",
+        "7",
+        "4",
+        "6"
+      ],
+      "answer": [
+        "A",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.871Z",
+      "updated_at": "2026-09-24T16:27:42.871Z"
+    },
+    {
+      "id": "q_023b3c4d5e6f7g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 3,
+      "knowledge_point": "10以内数的大小比较",
+      "tags": [
+        "比大小"
+      ],
+      "stem": "在1、2、3、4中，哪些数比2大？",
+      "options": [
+        "1",
+        "3",
+        "4",
+        "2"
+      ],
+      "answer": [
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.907Z",
+      "updated_at": "2026-09-24T16:27:42.907Z"
+    },
+    {
+      "id": "q_024h8i9j0k1l2m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 1,
+      "knowledge_point": "5以内加法",
+      "tags": [
+        "加法"
+      ],
+      "stem": "哪些算式得数是4？",
+      "options": [
+        "1+3",
+        "2+2",
+        "3+2",
+        "4+0"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.942Z",
+      "updated_at": "2026-09-24T16:27:42.942Z"
+    },
+    {
+      "id": "q_025n3o4p5q6r7s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后左右",
+      "tags": [
+        "位置"
+      ],
+      "stem": "小动物排队：小猫、小狗、小兔。从左数，小猫第1，小狗第2，小兔第3。哪些说法对？",
+      "options": [
+        "小猫在小狗左边",
+        "小兔在小狗右边",
+        "小狗在小猫右边",
+        "小兔在小猫左边"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:42.988Z",
+      "updated_at": "2026-09-24T16:27:42.988Z"
+    },
+    {
+      "id": "q_026t8u9v0w1x2y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "认识立体图形",
+      "tags": [
+        "图形"
+      ],
+      "stem": "下面哪些是立体图形？",
+      "options": [
+        "球",
+        "正方体",
+        "圆",
+        "圆柱"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.019Z",
+      "updated_at": "2026-09-24T16:27:43.019Z"
+    },
+    {
+      "id": "q_027z3a4b5c6d7e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "认识整时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "下面哪些是整时？",
+      "options": [
+        "3时",
+        "6时半",
+        "9时",
+        "12时"
+      ],
+      "answer": [
+        "A",
+        "C",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.051Z",
+      "updated_at": "2026-09-24T16:27:43.051Z"
+    },
+    {
+      "id": "q_028f8g9h0i1j2k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 4,
+      "knowledge_point": "数的顺序",
+      "tags": [
+        "数序"
+      ],
+      "stem": "从1数到10，哪些数在7和10之间？",
+      "options": [
+        "6",
+        "8",
+        "9",
+        "10"
+      ],
+      "answer": [
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.086Z",
+      "updated_at": "2026-09-24T16:27:43.086Z"
+    },
+    {
+      "id": "q_029l3m4n5o6p7q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 2,
+      "knowledge_point": "10以内减法",
+      "tags": [
+        "减法"
+      ],
+      "stem": "哪些算式得数是5？",
+      "options": [
+        "9-4",
+        "8-3",
+        "7-1",
+        "10-5"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.115Z",
+      "updated_at": "2026-09-24T16:27:43.115Z"
+    },
+    {
+      "id": "q_030r8s9t0u1v2w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 4,
+      "lesson": 1,
+      "knowledge_point": "按标准分类",
+      "tags": [
+        "分类"
+      ],
+      "stem": "下面哪些是水果？",
+      "options": [
+        "苹果",
+        "香蕉",
+        "白菜",
+        "梨"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.147Z",
+      "updated_at": "2026-09-24T16:27:43.147Z"
+    },
+    {
+      "id": "q_031x3y4z5a6b7c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 2,
+      "knowledge_point": "左右位置",
+      "tags": [
+        "位置"
+      ],
+      "stem": "排列为：△、□、○、☆。从左数，△第1，□第2，○第3，☆第4。哪些说法对？",
+      "options": [
+        "○在□右边",
+        "△在○左边",
+        "☆在○右边",
+        "□在☆右边"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.179Z",
+      "updated_at": "2026-09-24T16:27:43.179Z"
+    },
+    {
+      "id": "q_032d8e9f0g1h2i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "11-20各数的组成",
+      "tags": [
+        "数的组成"
+      ],
+      "stem": "下面哪些数由1个十和几个一组成？",
+      "options": [
+        "12",
+        "15",
+        "20",
+        "18"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.214Z",
+      "updated_at": "2026-09-24T16:27:43.214Z"
+    },
+    {
+      "id": "q_033j3k4l5m6n7o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "20以内进位加法",
+      "tags": [
+        "加法"
+      ],
+      "stem": "哪些算式得数是15？",
+      "options": [
+        "10+5",
+        "9+6",
+        "8+7",
+        "7+9"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.243Z",
+      "updated_at": "2026-09-24T16:27:43.243Z"
+    },
+    {
+      "id": "q_034p8q9r0s1t2u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "认识半时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "下面哪些是半时？",
+      "options": [
+        "3时半",
+        "6时",
+        "8时半",
+        "12时半"
+      ],
+      "answer": [
+        "A",
+        "C",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.272Z",
+      "updated_at": "2026-09-24T16:27:43.272Z"
+    },
+    {
+      "id": "q_035v3w4x5y6z7a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 4,
+      "knowledge_point": "连加连减",
+      "tags": [
+        "混合运算"
+      ],
+      "stem": "哪些算式得数是6？",
+      "options": [
+        "1+2+3",
+        "10-3-1",
+        "7-2+1",
+        "2+2+1"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.301Z",
+      "updated_at": "2026-09-24T16:27:43.301Z"
+    },
+    {
+      "id": "q_036b8c9d0e1f2g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后位置推理",
+      "tags": [
+        "位置推理"
+      ],
+      "stem": "小明在小华前面，小华在小丽前面。哪些说法对？",
+      "options": [
+        "小明在小丽前面",
+        "小丽在小华后面",
+        "小华在小明后面",
+        "小丽在小明前面"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.332Z",
+      "updated_at": "2026-09-24T16:27:43.332Z"
+    },
+    {
+      "id": "q_037h3i4j5k6l7m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "20以内进位加法",
+      "tags": [
+        "进位加法"
+      ],
+      "stem": "哪些算式得数是13？",
+      "options": [
+        "8+5",
+        "9+4",
+        "7+6",
+        "6+6"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.362Z",
+      "updated_at": "2026-09-24T16:27:43.362Z"
+    },
+    {
+      "id": "q_038n8o9p0q1r2s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 4,
+      "knowledge_point": "20以内减法",
+      "tags": [
+        "减法"
+      ],
+      "stem": "哪些算式得数是10？",
+      "options": [
+        "15-5",
+        "12-2",
+        "13-4",
+        "18-8"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.391Z",
+      "updated_at": "2026-09-24T16:27:43.391Z"
+    },
+    {
+      "id": "q_039t3u4v5w6x7y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "认识整时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "分针指向12，时针指向8，下面哪些说法对？",
+      "options": [
+        "8时",
+        "时针指向8",
+        "分针指向12",
+        "8时半"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.426Z",
+      "updated_at": "2026-09-24T16:27:43.426Z"
+    },
+    {
+      "id": "q_040z8a9b0c1d2e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "multiple",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "立体图形的滚动",
+      "tags": [
+        "图形"
+      ],
+      "stem": "下面哪些图形可以滚动？",
+      "options": [
+        "球",
+        "正方体",
+        "圆柱",
+        "长方体"
+      ],
+      "answer": [
+        "A",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.466Z",
+      "updated_at": "2026-09-24T16:27:43.466Z"
+    },
+    {
+      "id": "q_041f3g4h5i6j7k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "lesson": 1,
+      "knowledge_point": "数一数",
+      "tags": [
+        "数数"
+      ],
+      "stem": "数一数：1、2、3，一共有3个数。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.499Z",
+      "updated_at": "2026-09-24T16:27:43.499Z"
+    },
+    {
+      "id": "q_042l8m9n0o1p2q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 3,
+      "knowledge_point": "10以内数的大小比较",
+      "tags": [
+        "比大小"
+      ],
+      "stem": "5比3大。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.533Z",
+      "updated_at": "2026-09-24T16:27:43.533Z"
+    },
+    {
+      "id": "q_043r3s4t5u6v7w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 2,
+      "lesson": 1,
+      "knowledge_point": "比长短",
+      "tags": [
+        "比较"
+      ],
+      "stem": "两根绳子，一根长，一根短，长的那根一定更重。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.566Z",
+      "updated_at": "2026-09-24T16:27:43.566Z"
+    },
+    {
+      "id": "q_044x8y9z0a1b2c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 1,
+      "knowledge_point": "5以内加法",
+      "tags": [
+        "加法"
+      ],
+      "stem": "2+2=4。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.604Z",
+      "updated_at": "2026-09-24T16:27:43.604Z"
+    },
+    {
+      "id": "q_045d3e4f5g6h7i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后",
+      "tags": [
+        "位置"
+      ],
+      "stem": "小明在小华前面，小华在小明后面。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.636Z",
+      "updated_at": "2026-09-24T16:27:43.636Z"
+    },
+    {
+      "id": "q_046j8k9l0m1n2o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "认识立体图形",
+      "tags": [
+        "图形"
+      ],
+      "stem": "球是立体图形。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.670Z",
+      "updated_at": "2026-09-24T16:27:43.670Z"
+    },
+    {
+      "id": "q_047p3q4r5s6t7u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "认识整时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "钟面上分针指向12，时针指向6，是6时。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.703Z",
+      "updated_at": "2026-09-24T16:27:43.703Z"
+    },
+    {
+      "id": "q_048v8w9x0y1z2a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 4,
+      "knowledge_point": "几和第几",
+      "tags": [
+        "序数"
+      ],
+      "stem": "从右边数，第3个和3个表示意思一样。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.739Z",
+      "updated_at": "2026-09-24T16:27:43.739Z"
+    },
+    {
+      "id": "q_049b3c4d5e6f7g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 2,
+      "knowledge_point": "10以内减法",
+      "tags": [
+        "减法"
+      ],
+      "stem": "7-0=0。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.779Z",
+      "updated_at": "2026-09-24T16:27:43.779Z"
+    },
+    {
+      "id": "q_050h8i9j0k1l2m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 4,
+      "lesson": 1,
+      "knowledge_point": "分类标准",
+      "tags": [
+        "分类"
+      ],
+      "stem": "分类时，同一类物品必须完全相同。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.811Z",
+      "updated_at": "2026-09-24T16:27:43.811Z"
+    },
+    {
+      "id": "q_051n3o4p5q6r7s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 2,
+      "knowledge_point": "左右",
+      "tags": [
+        "位置"
+      ],
+      "stem": "从左数第2个和从右数第2个一定是同一个物体。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.847Z",
+      "updated_at": "2026-09-24T16:27:43.847Z"
+    },
+    {
+      "id": "q_052t8u9v0w1x2y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "11-20各数的组成",
+      "tags": [
+        "数的组成"
+      ],
+      "stem": "16里面有6个十和1个一。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.883Z",
+      "updated_at": "2026-09-24T16:27:43.883Z"
+    },
+    {
+      "id": "q_053z3a4b5c6d7e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "20以内进位加法",
+      "tags": [
+        "进位加法"
+      ],
+      "stem": "9+8=17。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.920Z",
+      "updated_at": "2026-09-24T16:27:43.920Z"
+    },
+    {
+      "id": "q_054f8g9h0i1j2k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "认识半时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "6时半时，分针指向6。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.953Z",
+      "updated_at": "2026-09-24T16:27:43.953Z"
+    },
+    {
+      "id": "q_055l3m4n5o6p7q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 4,
+      "knowledge_point": "加减混合",
+      "tags": [
+        "混合运算"
+      ],
+      "stem": "8-3+2=7。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:43.993Z",
+      "updated_at": "2026-09-24T16:27:43.993Z"
+    },
+    {
+      "id": "q_056r8s9t0u1v2w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "排队问题",
+      "tags": [
+        "位置推理"
+      ],
+      "stem": "排队时，从前面数小明是第4，从后面数小明是第3，这一队有6人。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.029Z",
+      "updated_at": "2026-09-24T16:27:44.029Z"
+    },
+    {
+      "id": "q_057x3y4z5a6b7c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "加法规律",
+      "tags": [
+        "加法"
+      ],
+      "stem": "两个数相加，和一定比其中任何一个加数都大。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.066Z",
+      "updated_at": "2026-09-24T16:27:44.066Z"
+    },
+    {
+      "id": "q_058d8e9f0g1h2i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 4,
+      "knowledge_point": "20以内减法",
+      "tags": [
+        "减法"
+      ],
+      "stem": "17-7=10。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.130Z",
+      "updated_at": "2026-09-24T16:27:44.130Z"
+    },
+    {
+      "id": "q_059j3k4l5m6n7o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "立体图形特征",
+      "tags": [
+        "图形"
+      ],
+      "stem": "圆柱从任何方向看都是圆。",
+      "answer": "false",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.174Z",
+      "updated_at": "2026-09-24T16:27:44.174Z"
+    },
+    {
+      "id": "q_060p8q9r0s1t2u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "judge",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "认识半时",
+      "tags": [
+        "钟表"
+      ],
+      "stem": "时针在9和10之间，分针指向6，是9时半。",
+      "answer": "true",
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.228Z",
+      "updated_at": "2026-09-24T16:27:44.228Z"
+    },
+    {
+      "id": "q_061v3w4x5y6z7a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "lesson": 1,
+      "knowledge_point": "数数与数字匹配",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「一个苹果、两个苹果、三个苹果」，请把左列数量与右列数字配对。",
+      "options": [
+        "3",
+        "1",
+        "2"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.334Z",
+      "updated_at": "2026-09-24T16:27:44.334Z"
+    },
+    {
+      "id": "q_062b8c9d0e1f2g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 1,
+      "knowledge_point": "数字与汉字",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「5、8、10」，请把左列数字与右列汉字配对。",
+      "options": [
+        "十",
+        "五",
+        "八"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.375Z",
+      "updated_at": "2026-09-24T16:27:44.375Z"
+    },
+    {
+      "id": "q_063h3i4j5k6l7m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 2,
+      "lesson": 1,
+      "knowledge_point": "比大小",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「3比5、7比2、4比4」，请把左列比较结果与右列词语配对。",
+      "options": [
+        "一样大",
+        "小",
+        "大"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.407Z",
+      "updated_at": "2026-09-24T16:27:44.407Z"
+    },
+    {
+      "id": "q_064n8o9p0q1r2s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 1,
+      "knowledge_point": "5以内加法",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「1+1、2+1、3+1」，请把左列算式与右列得数配对。",
+      "options": [
+        "4",
+        "2",
+        "3"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.437Z",
+      "updated_at": "2026-09-24T16:27:44.437Z"
+    },
+    {
+      "id": "q_065t3u4v5w6x7y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "位置反义词",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「上、前、左」，请把左列方向与右列相反方向配对。",
+      "options": [
+        "右",
+        "下",
+        "后"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.473Z",
+      "updated_at": "2026-09-24T16:27:44.473Z"
+    },
+    {
+      "id": "q_066z8a9b0c1d2e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "立体图形特征",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「球、正方体、圆柱」，请把左列图形与右列特征配对。",
+      "options": [
+        "有6个正方形面",
+        "上下一样粗能滚动",
+        "圆圆的能滚动"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.504Z",
+      "updated_at": "2026-09-24T16:27:44.504Z"
+    },
+    {
+      "id": "q_067f3g4h5i6j7k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "认识整时",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「3时、6时、9时」，请把左列时间与右列钟面描述配对。",
+      "options": [
+        "分针指向12，时针指向9",
+        "分针指向12，时针指向3",
+        "分针指向12，时针指向6"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.536Z",
+      "updated_at": "2026-09-24T16:27:44.536Z"
+    },
+    {
+      "id": "q_068l8m9n0o1p2q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 4,
+      "knowledge_point": "数的顺序",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「2的后面一个数、7的前面一个数、9的后面一个数」，请把左列描述与右列数字配对。",
+      "options": [
+        "6",
+        "10",
+        "3"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.568Z",
+      "updated_at": "2026-09-24T16:27:44.568Z"
+    },
+    {
+      "id": "q_069r3s4t5u6v7w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 2,
+      "knowledge_point": "10以内减法",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「5-2、8-3、10-4」，请把左列算式与右列得数配对。",
+      "options": [
+        "6",
+        "3",
+        "5"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.601Z",
+      "updated_at": "2026-09-24T16:27:44.601Z"
+    },
+    {
+      "id": "q_070x8y9z0a1b2c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 4,
+      "lesson": 1,
+      "knowledge_point": "分类",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「苹果、白菜、铅笔」，请把左列物品与右列类别配对。",
+      "options": [
+        "文具",
+        "水果",
+        "蔬菜"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.642Z",
+      "updated_at": "2026-09-24T16:27:44.642Z"
+    },
+    {
+      "id": "q_071d3e4f5g6h7i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 2,
+      "knowledge_point": "左右关系",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「小明在小华左边、小华在小丽左边、小丽在小明右边」，请把左列关系与右列等价说法配对。",
+      "options": [
+        "小丽在小华右边",
+        "小明在小丽左边",
+        "小华在小明右边"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.679Z",
+      "updated_at": "2026-09-24T16:27:44.679Z"
+    },
+    {
+      "id": "q_072j8k9l0m1n2o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "11-20各数的组成",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「12、15、20」，请把左列各数与右列组成配对。",
+      "options": [
+        "2个十",
+        "1个十和5个一",
+        "1个十和2个一"
+      ],
+      "answer": [
+        "C",
+        "B",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.711Z",
+      "updated_at": "2026-09-24T16:27:44.711Z"
+    },
+    {
+      "id": "q_073p3q4r5s6t7u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "20以内进位加法",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「10+7、8+5、9+6」，请把左列算式与右列得数配对。",
+      "options": [
+        "13",
+        "15",
+        "17"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.744Z",
+      "updated_at": "2026-09-24T16:27:44.744Z"
+    },
+    {
+      "id": "q_074v8w9x0y1z2a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "认识半时",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「7时半、8时半、12时半」，请把左列时间与右列钟面描述配对。",
+      "options": [
+        "时针在12和1之间，分针指向6",
+        "时针在7和8之间，分针指向6",
+        "时针在8和9之间，分针指向6"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.782Z",
+      "updated_at": "2026-09-24T16:27:44.782Z"
+    },
+    {
+      "id": "q_075b3c4d5e6f7g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 4,
+      "knowledge_point": "连加连减",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「1+2+3、10-4-2、9-5+6」，请把左列算式与右列得数配对。",
+      "options": [
+        "10",
+        "6",
+        "4"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.817Z",
+      "updated_at": "2026-09-24T16:27:44.817Z"
+    },
+    {
+      "id": "q_076h8i9j0k1l2m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后位置推理",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「小明在小华前面、小华在小丽前面、小丽在小明后面」，请把左列关系与右列等价说法配对。",
+      "options": [
+        "小丽在小华后面",
+        "小明在小丽前面",
+        "小华在小明后面"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.851Z",
+      "updated_at": "2026-09-24T16:27:44.851Z"
+    },
+    {
+      "id": "q_077n3o4p5q6r7s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "20以内进位加法",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「9+8、7+8、6+7」，请把左列算式与右列得数配对。",
+      "options": [
+        "15",
+        "17",
+        "13"
+      ],
+      "answer": [
+        "B",
+        "A",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.880Z",
+      "updated_at": "2026-09-24T16:27:44.880Z"
+    },
+    {
+      "id": "q_078t8u9v0w1x2y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 4,
+      "knowledge_point": "20以内减法",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「15-8、14-6、13-7」，请把左列算式与右列得数配对。",
+      "options": [
+        "8",
+        "6",
+        "7"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.909Z",
+      "updated_at": "2026-09-24T16:27:44.909Z"
+    },
+    {
+      "id": "q_079z3a4b5c6d7e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 6,
+      "lesson": 1,
+      "knowledge_point": "立体图形特征",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「长方体、正方体、圆柱」，请把左列图形与右列特征配对。",
+      "options": [
+        "6个面都是正方形",
+        "上下两个面是圆，侧面是曲面",
+        "6个面通常是长方形"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.943Z",
+      "updated_at": "2026-09-24T16:27:44.943Z"
+    },
+    {
+      "id": "q_080f8g9h0i1j2k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "match",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "整时与半时",
+      "tags": [
+        "连线"
+      ],
+      "stem": "左列依次是「3时、3时半、6时」，请把左列时间与右列钟面描述配对。",
+      "options": [
+        "分针指向6，时针在3和4之间",
+        "分针指向12，时针指向3",
+        "分针指向12，时针指向6"
+      ],
+      "answer": [
+        "B",
+        "A",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:44.976Z",
+      "updated_at": "2026-09-24T16:27:44.976Z"
+    },
+    {
+      "id": "q_082r8s9t0u1v2w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 3,
+      "knowledge_point": "数的大小排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面数字按从大到小排序。",
+      "options": [
+        "3",
+        "7",
+        "5",
+        "6"
+      ],
+      "answer": [
+        "B",
+        "D",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.009Z",
+      "updated_at": "2026-09-24T16:27:45.009Z"
+    },
+    {
+      "id": "q_083x3y4z5a6b7c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 2,
+      "lesson": 2,
+      "knowledge_point": "比长短",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面绳子按从短到长排序。",
+      "options": [
+        "中绳",
+        "长绳",
+        "短绳"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.039Z",
+      "updated_at": "2026-09-24T16:27:45.039Z"
+    },
+    {
+      "id": "q_084d8e9f0g1h2i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 1,
+      "knowledge_point": "加法得数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面算式按得数从小到大排序。",
+      "options": [
+        "3+2",
+        "1+3",
+        "1+0",
+        "2+1"
+      ],
+      "answer": [
+        "C",
+        "D",
+        "B",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.068Z",
+      "updated_at": "2026-09-24T16:27:45.068Z"
+    },
+    {
+      "id": "q_085j3k4l5m6n7o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后顺序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "排队从左到右：小华在小明右边，小明在小丽右边。按从左到右排序。",
+      "options": [
+        "小明",
+        "小华",
+        "小丽"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.099Z",
+      "updated_at": "2026-09-24T16:27:45.099Z"
+    },
+    {
+      "id": "q_086p8q9r0s1t2u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "low",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 1,
+      "knowledge_point": "时间先后",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面时间按从早到晚排序。",
+      "options": [
+        "6时",
+        "3时",
+        "9时"
+      ],
+      "answer": [
+        "B",
+        "A",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.129Z",
+      "updated_at": "2026-09-24T16:27:45.129Z"
+    },
+    {
+      "id": "q_087v3w4x5y6z7a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 1,
+      "lesson": 3,
+      "knowledge_point": "数的大小排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面数字按从大到小排序。",
+      "options": [
+        "10",
+        "7",
+        "9",
+        "8"
+      ],
+      "answer": [
+        "A",
+        "C",
+        "D",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.159Z",
+      "updated_at": "2026-09-24T16:27:45.159Z"
+    },
+    {
+      "id": "q_088b8c9d0e1f2g",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 2,
+      "knowledge_point": "减法与加法得数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面算式按得数从大到小排序。",
+      "options": [
+        "9-2",
+        "5+3",
+        "10-1",
+        "3+3"
+      ],
+      "answer": [
+        "C",
+        "B",
+        "A",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.189Z",
+      "updated_at": "2026-09-24T16:27:45.189Z"
+    },
+    {
+      "id": "q_089h3i4j5k6l7m",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 4,
+      "lesson": 1,
+      "knowledge_point": "数量多少排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面物品按数量从少到多排序。",
+      "options": [
+        "5个桃",
+        "3个苹果",
+        "1个梨",
+        "2个香蕉"
+      ],
+      "answer": [
+        "C",
+        "D",
+        "B",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.218Z",
+      "updated_at": "2026-09-24T16:27:45.218Z"
+    },
+    {
+      "id": "q_090n8o9p0q1r2s",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "11-20各数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面数按从小到大排序。",
+      "options": [
+        "18",
+        "12",
+        "15",
+        "20"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "A",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.250Z",
+      "updated_at": "2026-09-24T16:27:45.250Z"
+    },
+    {
+      "id": "q_091t3u4v5w6x7y",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "mid",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "时间排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面时间按从晚到早排序。",
+      "options": [
+        "7时半",
+        "6时",
+        "9时半",
+        "8时"
+      ],
+      "answer": [
+        "C",
+        "D",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.283Z",
+      "updated_at": "2026-09-24T16:27:45.283Z"
+    },
+    {
+      "id": "q_092z8a9b0c1d2e",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 4,
+      "knowledge_point": "加减混合得数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面算式按得数从小到大排序。",
+      "options": [
+        "1+2+3",
+        "10-2-1",
+        "8-1-4",
+        "9-3-2"
+      ],
+      "answer": [
+        "C",
+        "D",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.313Z",
+      "updated_at": "2026-09-24T16:27:45.313Z"
+    },
+    {
+      "id": "q_093f3g4h5i6j7k",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 1,
+      "knowledge_point": "前后位置推理",
+      "tags": [
+        "排序"
+      ],
+      "stem": "小明在小华前面，小丽在小华后面，小刚在小明前面。按从前到后排序。",
+      "options": [
+        "小华",
+        "小丽",
+        "小明",
+        "小刚"
+      ],
+      "answer": [
+        "D",
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.341Z",
+      "updated_at": "2026-09-24T16:27:45.341Z"
+    },
+    {
+      "id": "q_094l8m9n0o1p2q",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 3,
+      "knowledge_point": "进位加法得数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面算式按得数从大到小排序。",
+      "options": [
+        "9+7",
+        "8+9",
+        "6+8",
+        "5+7"
+      ],
+      "answer": [
+        "B",
+        "A",
+        "C",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.369Z",
+      "updated_at": "2026-09-24T16:27:45.369Z"
+    },
+    {
+      "id": "q_095r3s4t5u6v7w",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 4,
+      "knowledge_point": "20以内减法得数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面算式按得数从小到大排序。",
+      "options": [
+        "12-7",
+        "15-7",
+        "14-5",
+        "13-6"
+      ],
+      "answer": [
+        "A",
+        "D",
+        "B",
+        "C"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.399Z",
+      "updated_at": "2026-09-24T16:27:45.399Z"
+    },
+    {
+      "id": "q_096x8y9z0a1b2c",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 8,
+      "lesson": 2,
+      "knowledge_point": "时间排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面时间按从早到晚排序。",
+      "options": [
+        "11时半",
+        "9时",
+        "10时半",
+        "8时"
+      ],
+      "answer": [
+        "D",
+        "B",
+        "C",
+        "A"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.427Z",
+      "updated_at": "2026-09-24T16:27:45.427Z"
+    },
+    {
+      "id": "q_097d3e4f5g6h7i",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "11-20各数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面数按从大到小排序。",
+      "options": [
+        "19",
+        "11",
+        "16",
+        "14"
+      ],
+      "answer": [
+        "A",
+        "C",
+        "D",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.459Z",
+      "updated_at": "2026-09-24T16:27:45.459Z"
+    },
+    {
+      "id": "q_098j8k9l0m1n2o",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 3,
+      "lesson": 4,
+      "knowledge_point": "加减混合得数排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面算式按得数从大到小排序。",
+      "options": [
+        "2+3+4",
+        "10-3-1",
+        "8-4+3",
+        "9-1-3"
+      ],
+      "answer": [
+        "A",
+        "C",
+        "B",
+        "D"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.488Z",
+      "updated_at": "2026-09-24T16:27:45.488Z"
+    },
+    {
+      "id": "q_099p3q4r5s6t7u",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 5,
+      "lesson": 2,
+      "knowledge_point": "上下位置推理",
+      "tags": [
+        "排序"
+      ],
+      "stem": "小兔在小猫上面，小狗在小猫下面，小马在小兔上面。按从上到下排序。",
+      "options": [
+        "小猫",
+        "小狗",
+        "小兔",
+        "小马"
+      ],
+      "answer": [
+        "D",
+        "C",
+        "A",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.523Z",
+      "updated_at": "2026-09-24T16:27:45.523Z"
+    },
+    {
+      "id": "q_100v8w9x0y1z2a",
+      "stage": "primary",
+      "subject": "math",
+      "grade": 1,
+      "difficulty": "high",
+      "type": "order",
+      "volume": "upper",
+      "textbook": "北师大版",
+      "unit": 7,
+      "lesson": 1,
+      "knowledge_point": "数的大小排序",
+      "tags": [
+        "排序"
+      ],
+      "stem": "把下面数按从小到大排序。",
+      "options": [
+        "13",
+        "20",
+        "11",
+        "18"
+      ],
+      "answer": [
+        "C",
+        "A",
+        "D",
+        "B"
+      ],
+      "points": 2,
+      "source": "builtin",
+      "origin_id": null,
+      "owner": null,
+      "visibility": "public",
+      "status": "published",
+      "created_at": "2026-09-24T16:27:45.560Z",
+      "updated_at": "2026-09-24T16:27:45.560Z"
+    }
+  ]
+}

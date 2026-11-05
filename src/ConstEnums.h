@@ -224,6 +224,20 @@ enum CrazyDaveState : int32_t
 	CRAZY_DAVE_HANDING_TALKING = 5,
 	CRAZY_DAVE_HANDING_IDLING = 6
 };
+enum UltimateType : int32_t
+{
+	ULTIMATE_SUN_GEYSER = 0,      // 向日葵：阳光井喷
+	ULTIMATE_PEA_BARRAGE = 1,     // 豌豆射手：每路 10 发豌豆
+	ULTIMATE_JALAPENO_ALL = 2,    // 火爆辣椒：每路火焰
+	ULTIMATE_POTATO_MINES = 3,    // 土豆地雷：每路随机 2 个
+	ULTIMATE_HYPNO_ALLIES = 4,    // 魅惑菇：每路左侧友方僵尸
+	ULTIMATE_BUTTER_RAIN = 5,     // 黄油玉米：全屏 10 黄油
+	ULTIMATE_SQUASH_LINE = 6,     // 窝瓜：每路最右空位召唤
+	ULTIMATE_STAR_STORM = 7,      // 杨桃：大量五角星
+	ULTIMATE_CACTUS_SPIKES = 8,   // 仙人掌：每路尖刺扫射
+	ULTIMATE_COB_BARRAGE = 9,     // 玉米加农炮：从中向右轰 10 次
+	NUM_ULTIMATE_TYPES
+};
 enum CursorType : int32_t
 {
 	CURSOR_TYPE_NORMAL,
@@ -320,6 +334,7 @@ enum Dialogs : int32_t
 	DIALOG_PURCHASE_PACKET_SLOT,                // 50
 	DIALOG_ZOMBATAR_TOS,                        // 51: terms of service
 	DIALOG_ZOMBATAR_DELETE,                     // 52
+	DIALOG_LEARNING_QUIZ,                       // 53: plant-to-learn quiz popup
 	NUM_DIALOGS
 };
 enum DebugTextMode : int32_t

@@ -241,6 +241,12 @@ Module.canvas.addEventListener('contextmenu', function(e) {
 <script>
 'use strict';
 
+// Self-host convenience: if the server also publishes game data under this URL
+// (e.g. nginx location /resources/ → web/pvz-web-resources/), load it automatically.
+// Set to '' to keep the stock "user must upload resources" behavior.
+const BUNDLED_RESOURCES_BASE = '/resources/';
+const BUNDLED_AUTO_START = true;
+
 const collectedFiles = new Map();
 let hasPak = false;
 let hasProperties = false;
@@ -787,6 +793,105 @@ window.onGameExit = function() {
 
     window.setTimeout(() => window.location.reload(), 0);
 };
+
+async function fetchBundledFile(url, relativePath) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error('HTTP ' + response.status + ' for ' + relativePath);
+    }
+    const data = new Uint8Array(await response.arrayBuffer());
+    collectedFiles.set(relativePath, new File([data], relativePath.split('/').pop()));
+}
+
+async function tryLoadBundledResources() {
+    if (!BUNDLED_RESOURCES_BASE) return false;
+
+    const base = BUNDLED_RESOURCES_BASE.endsWith('/')
+        ? BUNDLED_RESOURCES_BASE
+        : BUNDLED_RESOURCES_BASE + '/';
+
+    dropZone.classList.add('loading');
+    dropZone.style.pointerEvents = 'none';
+    loadStatus.style.display = 'block';
+    loadStatus.classList.remove('has-error');
+
+    try {
+        // Prefer a single ZIP (already prepared next to main.pak for nginx).
+        loadStatus.textContent = 'Looking for bundled resources…';
+        const zipUrl = base + 'pvz-resources.zip';
+        const zipProbe = await fetch(zipUrl, { method: 'HEAD' });
+        if (zipProbe.ok) {
+            loadStatus.textContent = 'Downloading bundled resource pack…';
+            const zipResponse = await fetch(zipUrl);
+            if (!zipResponse.ok) {
+                throw new Error('Failed to download ' + zipUrl);
+            }
+            const zipBlob = await zipResponse.blob();
+            await importResourceZip(new File([zipBlob], 'pvz-resources.zip'), browseZipBtn);
+            refreshUI();
+            return hasPak && hasProperties;
+        }
+
+        // Fallback: main.pak + properties/* listed by manifest.json
+        loadStatus.textContent = 'Downloading main.pak…';
+        await fetchBundledFile(base + 'main.pak', 'main.pak');
+
+        let propertyFiles = [
+            'properties/resources.xml',
+            'properties/default.xml',
+            'properties/Layout.xml',
+            'properties/LawnStrings.txt',
+            'properties/ZombatarTOS.txt',
+            'properties/partner.xml',
+            'properties/partner.xml.sig',
+            'properties/partner_logo.jpg',
+            'properties/Gameid001WD.xml'
+        ];
+        try {
+            const manifestResponse = await fetch(base + 'manifest.json');
+            if (manifestResponse.ok) {
+                const manifest = await manifestResponse.json();
+                if (Array.isArray(manifest.files) && manifest.files.length > 0) {
+                    propertyFiles = manifest.files.filter(path => path !== 'main.pak');
+                }
+            }
+        } catch (e) {
+            console.warn('Bundled manifest.json not used:', e);
+        }
+
+        for (let i = 0; i < propertyFiles.length; i++) {
+            const path = propertyFiles[i];
+            loadStatus.textContent = 'Downloading ' + path + ' (' + (i + 1) + '/' + propertyFiles.length + ')…';
+            try {
+                await fetchBundledFile(base + path, path);
+            } catch (e) {
+                console.warn('Optional bundled file missing:', path, e);
+            }
+        }
+
+        refreshUI();
+        return hasPak && hasProperties;
+    } catch (e) {
+        console.warn('Bundled resource auto-load skipped:', e);
+        loadStatus.textContent = '';
+        loadStatus.style.display = 'none';
+        dropZone.classList.remove('loading');
+        dropZone.style.pointerEvents = '';
+        return false;
+    }
+}
+
+(async () => {
+    const loaded = await tryLoadBundledResources();
+    if (!loaded) return;
+    if (BUNDLED_AUTO_START) {
+        await startGame();
+    } else {
+        dropZone.classList.remove('loading');
+        dropZone.style.pointerEvents = '';
+        loadStatus.style.display = 'none';
+    }
+})();
 </script>
 </body>
 </html>

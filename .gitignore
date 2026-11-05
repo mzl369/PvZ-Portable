@@ -412,6 +412,16 @@ tools/read-compiled/target
 *.sublime-workspace
 
 build-*/
+dist/
+
+# Assembled local import pack (may contain copyrighted main.pak)
+导入资源/
+
+# Local self-host game assets (copyrighted; do NOT commit/push)
+web/pvz-web-resources/main.pak
+web/pvz-web-resources/properties/
+web/pvz-web-resources/*.zip
+web/nginx/
 
 # AI agent tooling
 # Vendor-neutral agent skills & config
