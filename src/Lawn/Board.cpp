@@ -4146,10 +4146,6 @@ namespace
 			if (theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_HIGH_GROUND &&
 				!Zombie::ZombieTypeCanGoOnHighGround(theType))
 				return;
-			// Match game rule: keep gargantuars off the top row.
-			if (theRow == 0 &&
-				(theType == ZombieType::ZOMBIE_GARGANTUAR || theType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))
-				return;
 
 			aWeights[aCount].mItem = theType;
 			aWeights[aCount].mWeight = theWeight;
@@ -4157,6 +4153,7 @@ namespace
 		};
 
 		// Low weight for basic; high weight for elites.
+		// No Gargantuar / Red-eye: hypnotized ones smash ally plants and don't fight zombies.
 		add(ZombieType::ZOMBIE_NORMAL, 4);
 		add(ZombieType::ZOMBIE_TRAFFIC_CONE, 14);
 		add(ZombieType::ZOMBIE_POLEVAULTER, 16);
@@ -4168,8 +4165,6 @@ namespace
 		add(ZombieType::ZOMBIE_LADDER, 18);
 		add(ZombieType::ZOMBIE_POGO, 14);
 		add(ZombieType::ZOMBIE_YETI, 12);
-		add(ZombieType::ZOMBIE_GARGANTUAR, 30);
-		add(ZombieType::ZOMBIE_REDEYE_GARGANTUAR, 16);
 		add(ZombieType::ZOMBIE_IMP, 10);
 		add(ZombieType::ZOMBIE_BALLOON, 12);
 		add(ZombieType::ZOMBIE_DANCER, 10);

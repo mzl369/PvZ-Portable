@@ -742,6 +742,13 @@ void Coin::Update()
 	else if (!mIsBeingCollected)
 	{
 		UpdateFall();
+		// Auto-collect sun and money during play (seed packets / awards stay manual).
+		if (mBoard && !mBoard->mPaused && mApp->mGameScene == GameScenes::SCENE_PLAYING &&
+			!mDead && mHitGround && !IsLevelAward() && (IsSun() || IsMoney()))
+		{
+			PlayCollectSound();
+			Collect();
+		}
 	}
 	else
 	{
