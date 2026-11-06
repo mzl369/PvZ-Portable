@@ -607,115 +607,241 @@ namespace
 		return ApplyToneMark(BuildSyllableBase(theInitial, theFinal), theTone);
 	}
 
-	std::string ConfusableInitial(const std::string& theInitial)
-	{
-		if (theInitial == "b") return (RandInt(0, 1) == 0) ? "p" : "d";
-		if (theInitial == "p") return (RandInt(0, 1) == 0) ? "b" : "q";
-		if (theInitial == "d") return (RandInt(0, 1) == 0) ? "b" : "t";
-		if (theInitial == "q") return (RandInt(0, 1) == 0) ? "p" : "j";
-		if (theInitial == "z") return "zh";
-		if (theInitial == "c") return "ch";
-		if (theInitial == "s") return "sh";
-		if (theInitial == "zh") return "z";
-		if (theInitial == "ch") return "c";
-		if (theInitial == "sh") return "s";
-		if (theInitial == "n") return "l";
-		if (theInitial == "l") return "n";
-		return {};
-	}
-
-	std::string ConfusableFinal(const std::string& theFinal)
-	{
-		if (theFinal == "an") return "ang";
-		if (theFinal == "ang") return "an";
-		if (theFinal == "en") return "eng";
-		if (theFinal == "eng") return "en";
-		if (theFinal == "in") return "ing";
-		if (theFinal == "ing") return "in";
-		if (theFinal == "ian") return "iang";
-		if (theFinal == "iang") return "ian";
-		if (theFinal == "uan") return "uang";
-		if (theFinal == "uang") return "uan";
-		if (theFinal == "ui") return "iu";
-		if (theFinal == "iu") return "ui";
-		if (theFinal == "ie") return "ei";
-		if (theFinal == "ei") return "ie";
-		return {};
-	}
-
-	std::string MakeConfusablePinyin(const QuizHanzi& theHanzi)
-	{
-		std::vector<std::string> aCandidates;
-		aCandidates.reserve(8);
-
-		const std::string aIni = theHanzi.initial;
-		const std::string aFin = theHanzi.finalNoTone;
-		const int aTone = theHanzi.tone;
-
-		const std::string aAltIni = ConfusableInitial(aIni);
-		if (!aAltIni.empty())
-			aCandidates.push_back(BuildPinyin(aAltIni, aFin, std::max(1, aTone)));
-
-		const std::string aAltFin = ConfusableFinal(aFin);
-		if (!aAltFin.empty())
-			aCandidates.push_back(BuildPinyin(aIni, aAltFin, std::max(1, aTone)));
-
-		if (aTone >= 1 && aTone <= 4)
+		std::vector<std::string> ConfusableInitialOptions(const std::string& theInitial)
 		{
-			for (int t = 1; t <= 4; ++t)
-			{
-				if (t == aTone)
-					continue;
-				aCandidates.push_back(BuildPinyin(aIni, aFin, t));
-			}
+			if (theInitial == "b") return { "p", "d" };
+			if (theInitial == "p") return { "b", "q" };
+			if (theInitial == "d") return { "b", "t" };
+			if (theInitial == "q") return { "p", "j" };
+			if (theInitial == "z") return { "zh" };
+			if (theInitial == "c") return { "ch" };
+			if (theInitial == "s") return { "sh" };
+			if (theInitial == "zh") return { "z" };
+			if (theInitial == "ch") return { "c" };
+			if (theInitial == "sh") return { "s" };
+			if (theInitial == "n") return { "l" };
+			if (theInitial == "l") return { "n" };
+			return {};
 		}
 
-		if (!aAltIni.empty() && !aAltFin.empty())
-			aCandidates.push_back(BuildPinyin(aAltIni, aAltFin, std::max(1, aTone)));
-
-		if (aCandidates.empty())
+		std::vector<std::string> ConfusableFinalOptions(const std::string& theFinal)
+		{
+			if (theFinal == "an") return { "ang" };
+			if (theFinal == "ang") return { "an" };
+			if (theFinal == "en") return { "eng" };
+			if (theFinal == "eng") return { "en" };
+			if (theFinal == "in") return { "ing" };
+			if (theFinal == "ing") return { "in" };
+			if (theFinal == "ian") return { "iang" };
+			if (theFinal == "iang") return { "ian" };
+			if (theFinal == "uan") return { "uang" };
+			if (theFinal == "uang") return { "uan" };
+			if (theFinal == "ui") return { "iu" };
+			if (theFinal == "iu") return { "ui" };
+			if (theFinal == "ie") return { "ei" };
+			if (theFinal == "ei") return { "ie" };
 			return {};
+		}
 
-		return aCandidates[RandInt(0, static_cast<int>(aCandidates.size()) - 1)];
+		bool HasPinyinConfusableSkill(const QuizHanzi& theHanzi)
+		{
+			return !ConfusableInitialOptions(theHanzi.initial).empty()
+				|| !ConfusableFinalOptions(theHanzi.finalNoTone).empty();
+		}
+
+		const QuizHanzi& PickRandomHanzi()
+		{
+			return gQuizHanzi[RandInt(0, static_cast<int>(std::size(gQuizHanzi)) - 1)];
+		}
+
+		const QuizHanzi& PickHanziForHanziToPinyin()
+		{
+			// Prefer characters that exercise initial/final confusable skills.
+			std::vector<const QuizHanzi*> aSkillPool;
+			aSkillPool.reserve(std::size(gQuizHanzi));
+			for (const QuizHanzi& aItem : gQuizHanzi)
+			{
+				if (HasPinyinConfusableSkill(aItem))
+					aSkillPool.push_back(&aItem);
+			}
+			if (!aSkillPool.empty() && RandInt(0, 99) < 90)
+				return *aSkillPool[RandInt(0, static_cast<int>(aSkillPool.size()) - 1)];
+			return PickRandomHanzi();
+		}
+
+	bool OptionAlreadyUsed(const std::array<std::string, 4>& theOptions, const std::string& theCandidate)
+	{
+		for (const std::string& aOpt : theOptions)
+		{
+			if (!aOpt.empty() && aOpt == theCandidate)
+				return true;
+		}
+		return false;
 	}
 
-	const QuizHanzi& PickRandomHanzi()
+	void AppendUniqueCandidate(std::vector<std::string>& theOut, const std::string& theCandidate, const std::string& theCorrect)
 	{
-		return gQuizHanzi[RandInt(0, static_cast<int>(std::size(gQuizHanzi)) - 1)];
+		if (theCandidate.empty() || theCandidate == theCorrect)
+			return;
+		for (const std::string& aExisting : theOut)
+		{
+			if (aExisting == theCandidate)
+				return;
+		}
+		theOut.push_back(theCandidate);
+	}
+
+	void ShuffleStrings(std::vector<std::string>& theItems)
+	{
+		for (int i = static_cast<int>(theItems.size()) - 1; i > 0; --i)
+		{
+			const int j = RandInt(0, i);
+			std::swap(theItems[static_cast<size_t>(i)], theItems[static_cast<size_t>(j)]);
+		}
+	}
+
+	void FillRemainingDistractors(std::array<std::string, 4>& theOptions, int theCorrectIndex, const std::vector<std::string>& thePreferred, auto&& theFallback)
+	{
+		size_t aPreferIdx = 0;
+		for (int i = 0; i < 4; ++i)
+		{
+			if (i == theCorrectIndex || !theOptions[i].empty())
+				continue;
+
+			while (aPreferIdx < thePreferred.size())
+			{
+				const std::string& aCand = thePreferred[aPreferIdx++];
+				if (!OptionAlreadyUsed(theOptions, aCand))
+				{
+					theOptions[i] = aCand;
+					break;
+				}
+			}
+			if (!theOptions[i].empty())
+				continue;
+
+			for (int attempt = 0; attempt < 64; ++attempt)
+			{
+				std::string aCand = theFallback();
+				if (!aCand.empty() && !OptionAlreadyUsed(theOptions, aCand))
+				{
+					theOptions[i] = std::move(aCand);
+					break;
+				}
+			}
+			if (theOptions[i].empty())
+				theOptions[i] = theFallback();
+		}
+	}
+
+		bool IsConfusablePartnerInitial(const std::string& theInitial, const std::string& theOther)
+		{
+			for (const std::string& aOpt : ConfusableInitialOptions(theInitial))
+			{
+				if (aOpt == theOther)
+					return true;
+			}
+			return false;
+		}
+
+		bool IsConfusablePartnerFinal(const std::string& theFinal, const std::string& theOther)
+		{
+			for (const std::string& aOpt : ConfusableFinalOptions(theFinal))
+			{
+				if (aOpt == theOther)
+					return true;
+			}
+			return false;
+		}
+
+		std::vector<std::string> CollectConfusablePinyins(const QuizHanzi& theHanzi)
+		{
+			// Layered distractors: hard (true initial/final confusable, incl. dual) first,
+			// then soft (same rhyme / same initial). Tone is not a skill point.
+			std::vector<std::string> aHard;
+			std::vector<std::string> aSoft;
+			aHard.reserve(16);
+			aSoft.reserve(16);
+
+			const std::string aIni = theHanzi.initial;
+			const std::string aFin = theHanzi.finalNoTone;
+			const int aTone = std::max(1, theHanzi.tone);
+			const std::string aCorrect = theHanzi.pinyin;
+			const std::vector<std::string> aAltInis = ConfusableInitialOptions(aIni);
+			const std::vector<std::string> aAltFins = ConfusableFinalOptions(aFin);
+
+			for (const std::string& aAltIni : aAltInis)
+				AppendUniqueCandidate(aHard, BuildPinyin(aAltIni, aFin, aTone), aCorrect);
+			for (const std::string& aAltFin : aAltFins)
+				AppendUniqueCandidate(aHard, BuildPinyin(aIni, aAltFin, aTone), aCorrect);
+			for (const std::string& aAltIni : aAltInis)
+			{
+				for (const std::string& aAltFin : aAltFins)
+					AppendUniqueCandidate(aHard, BuildPinyin(aAltIni, aAltFin, aTone), aCorrect);
+			}
+
+			for (const QuizHanzi& aItem : gQuizHanzi)
+			{
+				if (aItem.pinyin == aCorrect)
+					continue;
+
+				const bool aHardIni = IsConfusablePartnerInitial(aIni, aItem.initial)
+					&& (aItem.finalNoTone == aFin || IsConfusablePartnerFinal(aFin, aItem.finalNoTone));
+				const bool aHardFin = IsConfusablePartnerFinal(aFin, aItem.finalNoTone)
+					&& (aItem.initial == aIni || IsConfusablePartnerInitial(aIni, aItem.initial));
+				if (aHardIni || aHardFin)
+				{
+					AppendUniqueCandidate(aHard, aItem.pinyin, aCorrect);
+					continue;
+				}
+
+				const bool aSameRhyme = (aItem.finalNoTone == aFin && aItem.initial != aIni);
+				const bool aSameInitial = (aItem.initial == aIni && aItem.finalNoTone != aFin);
+				if (aSameRhyme || aSameInitial)
+					AppendUniqueCandidate(aSoft, aItem.pinyin, aCorrect);
+			}
+
+			ShuffleStrings(aHard);
+			ShuffleStrings(aSoft);
+			aHard.insert(aHard.end(), aSoft.begin(), aSoft.end());
+			return aHard;
+		}
+
+	std::vector<std::string> CollectLookalikeHanzi(const QuizHanzi& theHanzi)
+	{
+		std::vector<std::string> aOut;
+		if (theHanzi.lookalikeGroup <= 0)
+			return aOut;
+
+		for (const QuizHanzi& aItem : gQuizHanzi)
+		{
+			if (aItem.lookalikeGroup != theHanzi.lookalikeGroup)
+				continue;
+			if (aItem.pinyin == theHanzi.pinyin)
+				continue; // avoid same-reading twins like 晴/情 both looking correct
+			AppendUniqueCandidate(aOut, aItem.ch, theHanzi.ch);
+		}
+		ShuffleStrings(aOut);
+		return aOut;
 	}
 
 	std::string RandomPinyinDifferentFrom(const std::string& theCorrect)
 	{
-		for (int attempt = 0; attempt < 40; ++attempt)
+		for (int attempt = 0; attempt < 64; ++attempt)
 		{
 			const QuizHanzi& aOther = PickRandomHanzi();
 			if (aOther.pinyin != theCorrect)
 				return aOther.pinyin;
-			const std::string aMut = MakeConfusablePinyin(aOther);
-			if (!aMut.empty() && aMut != theCorrect)
-				return aMut;
 		}
 		return "mā";
 	}
 
-	std::string RandomHanziDifferentPinyin(const std::string& theCorrectPinyin, int thePreferGroup)
+	std::string RandomHanziDifferentPinyin(const std::string& theCorrectPinyin, const std::string& theCorrectHanzi)
 	{
-		if (thePreferGroup > 0)
-		{
-			std::vector<const QuizHanzi*> aGroup;
-			for (const QuizHanzi& aItem : gQuizHanzi)
-			{
-				if (aItem.lookalikeGroup == thePreferGroup && aItem.pinyin != theCorrectPinyin)
-					aGroup.push_back(&aItem);
-			}
-			if (!aGroup.empty())
-				return aGroup[RandInt(0, static_cast<int>(aGroup.size()) - 1)]->ch;
-		}
-
-		for (int attempt = 0; attempt < 40; ++attempt)
+		for (int attempt = 0; attempt < 64; ++attempt)
 		{
 			const QuizHanzi& aOther = PickRandomHanzi();
-			if (aOther.pinyin != theCorrectPinyin)
+			if (aOther.ch != theCorrectHanzi && aOther.pinyin != theCorrectPinyin)
 				return aOther.ch;
 		}
 		return "天";
@@ -769,27 +895,25 @@ LearningQuizQuestion GenerateMixedMathLearningQuiz()
 	return aQuestion;
 }
 
-LearningQuizQuestion GenerateHanziToPinyinLearningQuiz()
-{
-	LearningQuizQuestion aQuestion;
-	const QuizHanzi& aHanzi = PickRandomHanzi();
-	aQuestion.mKind = LearningQuizKind::HanziToPinyin;
-	aQuestion.mTitle = "看字选拼音";
-	aQuestion.mPrompt = "选出这个汉字正确的拼音";
-	aQuestion.mBigText = aHanzi.ch;
-	aQuestion.mCorrectIndex = 0;
-	aQuestion.mOptions[0] = aHanzi.pinyin;
+	LearningQuizQuestion GenerateHanziToPinyinLearningQuiz()
+	{
+		LearningQuizQuestion aQuestion;
+		const QuizHanzi& aHanzi = PickHanziForHanziToPinyin();
+		aQuestion.mKind = LearningQuizKind::HanziToPinyin;
+		aQuestion.mTitle = "看字选拼音";
+		aQuestion.mPrompt = "选出这个汉字正确的拼音";
+		aQuestion.mBigText = aHanzi.ch;
+		aQuestion.mCorrectIndex = 0;
+		aQuestion.mOptions[0] = aHanzi.pinyin;
 
-	// Prefer confusable distractors (形近声母 / 平翘舌 / 前后鼻音 / 易混韵母 / 声调).
-	FillUniqueDistractors(aQuestion.mOptions, 0, [&aHanzi]() {
-		const std::string aConfusable = MakeConfusablePinyin(aHanzi);
-		if (!aConfusable.empty() && aConfusable != aHanzi.pinyin)
-			return aConfusable;
-		return RandomPinyinDifferentFrom(aHanzi.pinyin);
-	});
-	ShuffleOptions(aQuestion);
-	return aQuestion;
-}
+		// Hard confusable first (incl. dual mix), then soft near-misses, then lexicon fill.
+		const std::vector<std::string> aPreferred = CollectConfusablePinyins(aHanzi);
+		FillRemainingDistractors(aQuestion.mOptions, 0, aPreferred, [&aHanzi]() {
+			return RandomPinyinDifferentFrom(aHanzi.pinyin);
+		});
+		ShuffleOptions(aQuestion);
+		return aQuestion;
+	}
 
 LearningQuizQuestion GeneratePinyinToHanziLearningQuiz()
 {
@@ -802,9 +926,10 @@ LearningQuizQuestion GeneratePinyinToHanziLearningQuiz()
 	aQuestion.mCorrectIndex = 0;
 	aQuestion.mOptions[0] = aHanzi.ch;
 
-	// Prefer lookalike characters with a different reading.
-	FillUniqueDistractors(aQuestion.mOptions, 0, [&aHanzi]() {
-		return RandomHanziDifferentPinyin(aHanzi.pinyin, aHanzi.lookalikeGroup);
+	// Prefer lookalikes first; fill leftovers from the full lexicon.
+	const std::vector<std::string> aPreferred = CollectLookalikeHanzi(aHanzi);
+	FillRemainingDistractors(aQuestion.mOptions, 0, aPreferred, [&aHanzi]() {
+		return RandomHanziDifferentPinyin(aHanzi.pinyin, aHanzi.ch);
 	});
 	ShuffleOptions(aQuestion);
 	return aQuestion;
