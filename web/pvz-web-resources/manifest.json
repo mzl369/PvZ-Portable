@@ -1,0 +1,14 @@
+{
+  "files": [
+    "main.pak",
+    "properties/resources.xml",
+    "properties/default.xml",
+    "properties/Layout.xml",
+    "properties/LawnStrings.txt",
+    "properties/ZombatarTOS.txt",
+    "properties/partner.xml",
+    "properties/partner.xml.sig",
+    "properties/partner_logo.jpg",
+    "properties/Gameid001WD.xml"
+  ]
+}

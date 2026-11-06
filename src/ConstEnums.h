@@ -227,15 +227,13 @@ enum CrazyDaveState : int32_t
 enum UltimateType : int32_t
 {
 	ULTIMATE_SUN_GEYSER = 0,      // 向日葵：阳光井喷
-	ULTIMATE_PEA_BARRAGE = 1,     // 豌豆射手：每路 10 发豌豆
+	ULTIMATE_PEA_BARRAGE = 1,     // 豌豆：每路混合 7普/7冰/7火/7刺
 	ULTIMATE_JALAPENO_ALL = 2,    // 火爆辣椒：每路火焰
-	ULTIMATE_POTATO_MINES = 3,    // 土豆地雷：每路随机 2 个
-	ULTIMATE_HYPNO_ALLIES = 4,    // 魅惑菇：每路左侧友方僵尸
-	ULTIMATE_BUTTER_RAIN = 5,     // 黄油玉米：全屏 10 黄油
-	ULTIMATE_SQUASH_LINE = 6,     // 窝瓜：每路最右空位召唤
-	ULTIMATE_STAR_STORM = 7,      // 杨桃：大量五角星
-	ULTIMATE_CACTUS_SPIKES = 8,   // 仙人掌：每路尖刺扫射
-	ULTIMATE_COB_BARRAGE = 9,     // 玉米加农炮：从中向右轰 10 次
+	ULTIMATE_HYPNO_ALLIES = 3,    // 魅惑菇：每路左侧友方僵尸
+	ULTIMATE_STAR_STORM = 4,      // 杨桃：每个格子发射一次
+	ULTIMATE_COB_BARRAGE = 5,     // 玉米加农炮：从中向右轰 10 次
+	ULTIMATE_CHERRY_BOMBS = 6,    // 樱桃炸弹：全部格子爆炸一次
+	ULTIMATE_PUMPKIN_SHIELD = 7,  // 南瓜：给场上植物套南瓜
 	NUM_ULTIMATE_TYPES
 };
 enum CursorType : int32_t

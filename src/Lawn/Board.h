@@ -376,22 +376,18 @@ public:
 	void							CastSunGeyserUltimate();
 	void							CastPeaBarrageUltimate();
 	void							CastJalapenoAllUltimate();
-	void							CastPotatoMinesUltimate();
 	void							CastHypnoAlliesUltimate();
-	void							CastButterRainUltimate();
-	void							CastSquashLineUltimate();
 	void							CastStarStormUltimate();
-	void							CastCactusSpikesUltimate();
 	void							CastCobBarrageUltimate();
+	void							CastCherryBombsUltimate();
+	void							CastPumpkinShieldUltimate();
 	void							UltimateBurnRow(int theRow);
 	void							UpdateUltimateBarrage();
-	void							FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags);
+	void							FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags, bool theConvertToFireball = false);
 	void							FireUltimateCobShot(int theShotIndex);
-	void							FireUltimateButterShot(int theShotIndex);
-	void							FireUltimateStarBurst();
-	void							ArmPotatoMineInstant(Plant* thePlant);
+	void							FireUltimateStarBurstAtIndex(int theIndex);
+	int								CountUltimateStarPositions() const;
 	bool							IsPlayablePlantRow(int theRow) const;
-	int								FindRightmostEmptyCol(int theRow, SeedType theSeedType);
 //	inline void						MouseDownNormal(int x, int y, int theClickCount) { /* not found */; }
 	bool							CanInteractWithBoardButtons();
 	void							DrawProgressMeter(Graphics* g);

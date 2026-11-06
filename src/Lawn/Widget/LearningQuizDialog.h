@@ -25,9 +25,8 @@ namespace Sexy
 enum class LearningQuizKind : int
 {
 	MathMixed,
-	PinyinInitial,
-	PinyinFinal,
-	Bank
+	HanziToPinyin,
+	PinyinToHanzi
 };
 
 enum class LearningQuizPurpose : int

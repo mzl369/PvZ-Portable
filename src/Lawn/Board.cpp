@@ -4088,14 +4088,43 @@ namespace
 {
 	constexpr int ULTIMATE_SPIN_TIME = 260;
 	constexpr int ULTIMATE_COOLDOWN_TIME = 3000; // 30 seconds @ ~100 ticks/sec
-	constexpr int ULTIMATE_LANE_SHOTS = 10;
-	constexpr int ULTIMATE_LANE_SHOT_INTERVAL = 7;
+	constexpr int ULTIMATE_PEA_MIX_SHOTS = 28; // 7 pea + 7 snow + 7 fire + 7 spike
+	constexpr int ULTIMATE_LANE_SHOT_INTERVAL = 6;
 	constexpr int ULTIMATE_COB_SHOTS = 10;
 	constexpr int ULTIMATE_COB_SHOT_INTERVAL = 18;
-	constexpr int ULTIMATE_BUTTER_SHOTS = 100; // 10x for denser butter rain
-	constexpr int ULTIMATE_BUTTER_SHOT_INTERVAL = 2;
-	constexpr int ULTIMATE_STAR_BURSTS = 80; // 10x star quantity
 	constexpr int ULTIMATE_STAR_BURST_INTERVAL = 2;
+
+	// Fixed mix that looks shuffled: exactly 7 of each projectile type.
+	constexpr ProjectileType kUltimatePeaMixSequence[ULTIMATE_PEA_MIX_SHOTS] = {
+		ProjectileType::PROJECTILE_PEA,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_PEA,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_PEA,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_PEA,
+		ProjectileType::PROJECTILE_PEA,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_PEA,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_SNOWPEA,
+		ProjectileType::PROJECTILE_FIREBALL,
+		ProjectileType::PROJECTILE_SPIKE,
+		ProjectileType::PROJECTILE_PEA,
+	};
 
 	ZombieType PickHypnoAllyZombieType(Board* theBoard, int theRow)
 	{
@@ -4310,13 +4339,11 @@ SeedType Board::GetUltimateSeedIcon(UltimateType theType) const
 	case UltimateType::ULTIMATE_SUN_GEYSER: return SeedType::SEED_SUNFLOWER;
 	case UltimateType::ULTIMATE_PEA_BARRAGE: return SeedType::SEED_PEASHOOTER;
 	case UltimateType::ULTIMATE_JALAPENO_ALL: return SeedType::SEED_JALAPENO;
-	case UltimateType::ULTIMATE_POTATO_MINES: return SeedType::SEED_POTATOMINE;
 	case UltimateType::ULTIMATE_HYPNO_ALLIES: return SeedType::SEED_HYPNOSHROOM;
-	case UltimateType::ULTIMATE_BUTTER_RAIN: return SeedType::SEED_KERNELPULT;
-	case UltimateType::ULTIMATE_SQUASH_LINE: return SeedType::SEED_SQUASH;
 	case UltimateType::ULTIMATE_STAR_STORM: return SeedType::SEED_STARFRUIT;
-	case UltimateType::ULTIMATE_CACTUS_SPIKES: return SeedType::SEED_CACTUS;
 	case UltimateType::ULTIMATE_COB_BARRAGE: return SeedType::SEED_COBCANNON;
+	case UltimateType::ULTIMATE_CHERRY_BOMBS: return SeedType::SEED_CHERRYBOMB;
+	case UltimateType::ULTIMATE_PUMPKIN_SHIELD: return SeedType::SEED_PUMPKINSHELL;
 	default: return SeedType::SEED_PEASHOOTER;
 	}
 }
@@ -4417,7 +4444,7 @@ void Board::UpdateUltimateAbility()
 	UpdateUltimateBarrage();
 }
 
-void Board::FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags)
+void Board::FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags, bool theConvertToFireball)
 {
 	mApp->PlayFoley(FoleyType::FOLEY_THROW);
 	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
@@ -4429,6 +4456,8 @@ void Board::FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlag
 		const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
 		Projectile* aProj = AddProjectile(10, aY, aRenderOrder, aRow, theType);
 		aProj->mDamageRangeFlags = theDamageFlags;
+		if (theConvertToFireball)
+			aProj->ConvertToFireball(99); // not a real torchwood column; just convert immediately
 	}
 }
 
@@ -4457,42 +4486,47 @@ void Board::FireUltimateCobShot(int theShotIndex)
 	ShakeBoard(1, -2);
 }
 
-void Board::FireUltimateButterShot(int theShotIndex)
+int Board::CountUltimateStarPositions() const
 {
-	mApp->PlayFoley(FoleyType::FOLEY_THROW);
-	const float aTargetX = 60.0f + RandRangeInt(0, BOARD_WIDTH - 120);
-	const int aRow = [&]() {
-		std::vector<int> aRows;
-		for (int r = 0; r < MAX_GRID_SIZE_Y; ++r)
-			if (IsPlayablePlantRow(r))
-				aRows.push_back(r);
-		if (aRows.empty())
-			return 0;
-		return aRows[Rand(static_cast<int>(aRows.size()))];
-	}();
-
-	const int aOriginX = BOARD_WIDTH / 2 + RandRangeInt(-40, 40);
-	const int aOriginY = 40 + (theShotIndex % 3) * 12;
-	const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
-	Projectile* aButter = AddProjectile(aOriginX, aOriginY, aRenderOrder, aRow, ProjectileType::PROJECTILE_BUTTER);
-	aButter->mDamageRangeFlags = 13;
-	const float aRangeX = aTargetX - aOriginX;
-	const float aRangeY = static_cast<float>(GridToPixelY(0, aRow) - aOriginY);
-	aButter->mMotionType = ProjectileMotion::MOTION_LOBBED;
-	aButter->mVelX = aRangeX / 120.0f;
-	aButter->mVelY = 0.0f;
-	aButter->mVelZ = aRangeY / 120.0f - 7.0f;
-	aButter->mAccZ = 0.115f;
+	int aCount = 0;
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+		aCount += MAX_GRID_SIZE_X;
+	}
+	return aCount;
 }
 
-void Board::FireUltimateStarBurst()
+void Board::FireUltimateStarBurstAtIndex(int theIndex)
 {
-	mApp->PlayFoley(FoleyType::FOLEY_THROW);
-	const float aCenterX = BOARD_WIDTH / 2.0f + RandRangeFloat(-80.0f, 80.0f);
-	const float aCenterY = BOARD_HEIGHT / 2.0f + RandRangeFloat(-60.0f, 40.0f);
-	const int aRow = std::clamp(PixelToGridYKeepOnBoard(static_cast<int>(aCenterX), static_cast<int>(aCenterY)), 0, MAX_GRID_SIZE_Y - 1);
-	const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
+	int aSeen = 0;
+	int aCol = -1;
+	int aRow = -1;
+	for (int r = 0; r < MAX_GRID_SIZE_Y; ++r)
+	{
+		if (!IsPlayablePlantRow(r))
+			continue;
+		for (int c = 0; c < MAX_GRID_SIZE_X; ++c)
+		{
+			if (aSeen == theIndex)
+			{
+				aRow = r;
+				aCol = c;
+				break;
+			}
+			++aSeen;
+		}
+		if (aCol >= 0)
+			break;
+	}
+	if (aCol < 0 || aRow < 0)
+		return;
 
+	mApp->PlayFoley(FoleyType::FOLEY_THROW);
+	const float aCenterX = static_cast<float>(GridToPixelX(aCol, aRow) + 40);
+	const float aCenterY = static_cast<float>(GridToPixelY(aCol, aRow) + 40);
+	const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
 	const float aShootAngleX = cos(DEG_TO_RAD(30.0f)) * 3.33f;
 	const float aShootAngleY = sin(DEG_TO_RAD(30.0f)) * 3.33f;
 	for (int i = 0; i < 5; ++i)
@@ -4526,25 +4560,25 @@ void Board::UpdateUltimateBarrage()
 	switch (mUltimateBarrageType)
 	{
 	case UltimateType::ULTIMATE_PEA_BARRAGE:
-		FireUltimateLaneProjectile(ProjectileType::PROJECTILE_PEA, 1);
+	{
+		const int aShot = std::clamp(mUltimateBarrageIndex, 0, ULTIMATE_PEA_MIX_SHOTS - 1);
+		const ProjectileType aWanted = kUltimatePeaMixSequence[aShot];
+		const bool aFire = (aWanted == ProjectileType::PROJECTILE_FIREBALL);
+		const ProjectileType aSpawn = aFire ? ProjectileType::PROJECTILE_PEA : aWanted;
+		const int aFlags = (aWanted == ProjectileType::PROJECTILE_SPIKE) ? 2 : 1;
+		FireUltimateLaneProjectile(aSpawn, aFlags, aFire);
+		++mUltimateBarrageIndex;
 		mUltimateBarrageTimer = ULTIMATE_LANE_SHOT_INTERVAL;
 		break;
-	case UltimateType::ULTIMATE_CACTUS_SPIKES:
-		FireUltimateLaneProjectile(ProjectileType::PROJECTILE_SPIKE, 2);
-		mUltimateBarrageTimer = ULTIMATE_LANE_SHOT_INTERVAL;
-		break;
+	}
 	case UltimateType::ULTIMATE_COB_BARRAGE:
 		FireUltimateCobShot(mUltimateBarrageIndex);
 		++mUltimateBarrageIndex;
 		mUltimateBarrageTimer = ULTIMATE_COB_SHOT_INTERVAL;
 		break;
-	case UltimateType::ULTIMATE_BUTTER_RAIN:
-		FireUltimateButterShot(mUltimateBarrageIndex);
-		++mUltimateBarrageIndex;
-		mUltimateBarrageTimer = ULTIMATE_BUTTER_SHOT_INTERVAL;
-		break;
 	case UltimateType::ULTIMATE_STAR_STORM:
-		FireUltimateStarBurst();
+		FireUltimateStarBurstAtIndex(mUltimateBarrageIndex);
+		++mUltimateBarrageIndex;
 		mUltimateBarrageTimer = ULTIMATE_STAR_BURST_INTERVAL;
 		break;
 	default:
@@ -4631,13 +4665,11 @@ void Board::CastUltimate(UltimateType theType)
 	case UltimateType::ULTIMATE_SUN_GEYSER: CastSunGeyserUltimate(); break;
 	case UltimateType::ULTIMATE_PEA_BARRAGE: CastPeaBarrageUltimate(); break;
 	case UltimateType::ULTIMATE_JALAPENO_ALL: CastJalapenoAllUltimate(); break;
-	case UltimateType::ULTIMATE_POTATO_MINES: CastPotatoMinesUltimate(); break;
 	case UltimateType::ULTIMATE_HYPNO_ALLIES: CastHypnoAlliesUltimate(); break;
-	case UltimateType::ULTIMATE_BUTTER_RAIN: CastButterRainUltimate(); break;
-	case UltimateType::ULTIMATE_SQUASH_LINE: CastSquashLineUltimate(); break;
 	case UltimateType::ULTIMATE_STAR_STORM: CastStarStormUltimate(); break;
-	case UltimateType::ULTIMATE_CACTUS_SPIKES: CastCactusSpikesUltimate(); break;
 	case UltimateType::ULTIMATE_COB_BARRAGE: CastCobBarrageUltimate(); break;
+	case UltimateType::ULTIMATE_CHERRY_BOMBS: CastCherryBombsUltimate(); break;
+	case UltimateType::ULTIMATE_PUMPKIN_SHIELD: CastPumpkinShieldUltimate(); break;
 	default: break;
 	}
 }
@@ -4659,7 +4691,7 @@ void Board::CastSunGeyserUltimate()
 void Board::CastPeaBarrageUltimate()
 {
 	mUltimateBarrageType = UltimateType::ULTIMATE_PEA_BARRAGE;
-	mUltimateBarrageLeft = ULTIMATE_LANE_SHOTS;
+	mUltimateBarrageLeft = ULTIMATE_PEA_MIX_SHOTS;
 	mUltimateBarrageTimer = 0;
 	mUltimateBarrageIndex = 0;
 	UpdateUltimateBarrage();
@@ -4710,45 +4742,6 @@ void Board::CastJalapenoAllUltimate()
 	}
 }
 
-void Board::ArmPotatoMineInstant(Plant* thePlant)
-{
-	if (!thePlant)
-		return;
-	thePlant->mStateCountdown = 0;
-	thePlant->mState = PlantState::STATE_POTATO_ARMED;
-	if (Reanimation* aBody = mApp->ReanimationTryToGet(thePlant->mBodyReanimID))
-	{
-		aBody->SetFramesForLayer("anim_armed");
-		aBody->mAnimRate = 12.0f;
-	}
-}
-
-void Board::CastPotatoMinesUltimate()
-{
-	mApp->PlaySample(SOUND_PLANT);
-	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
-	{
-		if (!IsPlayablePlantRow(aRow))
-			continue;
-
-		std::vector<int> aEmptyCols;
-		for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
-		{
-			if (CanPlantAt(aCol, aRow, SeedType::SEED_POTATOMINE) == PlantingReason::PLANTING_OK)
-				aEmptyCols.push_back(aCol);
-		}
-
-		for (int n = 0; n < 2 && !aEmptyCols.empty(); ++n)
-		{
-			const int aPick = Rand(static_cast<int>(aEmptyCols.size()));
-			const int aCol = aEmptyCols[aPick];
-			aEmptyCols.erase(aEmptyCols.begin() + aPick);
-			Plant* aMine = AddPlant(aCol, aRow, SeedType::SEED_POTATOMINE);
-			ArmPotatoMineInstant(aMine);
-		}
-	}
-}
-
 void Board::CastHypnoAlliesUltimate()
 {
 	mApp->PlaySample(SOUND_MINDCONTROLLED);
@@ -4769,51 +4762,14 @@ void Board::CastHypnoAlliesUltimate()
 	}
 }
 
-void Board::CastButterRainUltimate()
-{
-	mUltimateBarrageType = UltimateType::ULTIMATE_BUTTER_RAIN;
-	mUltimateBarrageLeft = ULTIMATE_BUTTER_SHOTS;
-	mUltimateBarrageTimer = 0;
-	mUltimateBarrageIndex = 0;
-	UpdateUltimateBarrage();
-}
-
-int Board::FindRightmostEmptyCol(int theRow, SeedType theSeedType)
-{
-	for (int aCol = MAX_GRID_SIZE_X - 1; aCol >= 0; --aCol)
-	{
-		if (CanPlantAt(aCol, theRow, theSeedType) == PlantingReason::PLANTING_OK)
-			return aCol;
-	}
-	return -1;
-}
-
-void Board::CastSquashLineUltimate()
-{
-	mApp->PlayFoley(FoleyType::FOLEY_PLANT);
-	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
-	{
-		if (!IsPlayablePlantRow(aRow))
-			continue;
-		const int aCol = FindRightmostEmptyCol(aRow, SeedType::SEED_SQUASH);
-		if (aCol >= 0)
-			AddPlant(aCol, aRow, SeedType::SEED_SQUASH);
-	}
-}
-
 void Board::CastStarStormUltimate()
 {
-	mUltimateBarrageType = UltimateType::ULTIMATE_STAR_STORM;
-	mUltimateBarrageLeft = ULTIMATE_STAR_BURSTS;
-	mUltimateBarrageTimer = 0;
-	mUltimateBarrageIndex = 0;
-	UpdateUltimateBarrage();
-}
+	const int aPositions = CountUltimateStarPositions();
+	if (aPositions <= 0)
+		return;
 
-void Board::CastCactusSpikesUltimate()
-{
-	mUltimateBarrageType = UltimateType::ULTIMATE_CACTUS_SPIKES;
-	mUltimateBarrageLeft = ULTIMATE_LANE_SHOTS;
+	mUltimateBarrageType = UltimateType::ULTIMATE_STAR_STORM;
+	mUltimateBarrageLeft = aPositions;
 	mUltimateBarrageTimer = 0;
 	mUltimateBarrageIndex = 0;
 	UpdateUltimateBarrage();
@@ -4827,6 +4783,54 @@ void Board::CastCobBarrageUltimate()
 	mUltimateBarrageIndex = 0;
 	UpdateUltimateBarrage();
 }
+
+void Board::CastCherryBombsUltimate()
+{
+	mApp->PlayFoley(FoleyType::FOLEY_CHERRYBOMB);
+	mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+	ShakeBoard(3, -4);
+
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+		for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
+		{
+			const int aPosX = GridToPixelX(aCol, aRow) + 40;
+			const int aPosY = GridToPixelY(aCol, aRow) + 40;
+			KillAllZombiesInRadius(aRow, aPosX, aPosY, 115, 1, true, 127);
+			mApp->AddPvzpParticle(
+				static_cast<float>(aPosX),
+				static_cast<float>(aPosY),
+				MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, aRow, 0),
+				ParticleEffect::PARTICLE_POWIE
+			);
+		}
+	}
+}
+
+	void Board::CastPumpkinShieldUltimate()
+	{
+		mApp->PlayFoley(FoleyType::FOLEY_PLANT);
+		for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+		{
+			if (!IsPlayablePlantRow(aRow))
+				continue;
+			for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
+			{
+				PlantsOnLawn aPlantsOnLawn;
+				GetPlantsOnLawn(aCol, aRow, &aPlantsOnLawn);
+				// Only cover cells that already have a plant (not empty tiles).
+				if (!aPlantsOnLawn.mNormalPlant && !aPlantsOnLawn.mUnderPlant && !aPlantsOnLawn.mFlyingPlant)
+					continue;
+				if (aPlantsOnLawn.mPumpkinPlant)
+					continue;
+				if (CanPlantAt(aCol, aRow, SeedType::SEED_PUMPKINSHELL) != PlantingReason::PLANTING_OK)
+					continue;
+				AddPlant(aCol, aRow, SeedType::SEED_PUMPKINSHELL);
+			}
+		}
+	}
 
 Plant* Board::ToolHitTestHelper(const HitResult* theHitResult)
 {

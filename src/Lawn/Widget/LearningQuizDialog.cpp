@@ -38,41 +38,7 @@
 
 namespace
 {
-	struct Grade1Hanzi
-	{
-		const char* ch;
-		const char* initial;
-		const char* finalSyllable;
-	};
-
-	constexpr Grade1Hanzi gGrade1Hanzi[] = {
-		{ "妈", "m", "a" }, { "爸", "b", "a" }, { "大", "d", "a" }, { "小", "x", "iao" },
-		{ "天", "t", "ian" }, { "地", "d", "i" }, { "人", "r", "en" }, { "手", "sh", "ou" },
-		{ "口", "k", "ou" }, { "目", "m", "u" }, { "耳", "er", "er" }, { "日", "r", "i" },
-		{ "月", "y", "ue" }, { "水", "sh", "ui" }, { "火", "h", "uo" }, { "山", "sh", "an" },
-		{ "石", "sh", "i" }, { "田", "t", "ian" }, { "禾", "h", "e" }, { "花", "h", "ua" },
-		{ "草", "c", "ao" }, { "虫", "ch", "ong" }, { "鸟", "n", "iao" }, { "鱼", "y", "u" },
-		{ "猫", "m", "ao" }, { "狗", "g", "ou" }, { "牛", "n", "iu" }, { "羊", "y", "ang" },
-		{ "马", "m", "a" }, { "鸡", "j", "i" }, { "鸭", "y", "a" }, { "兔", "t", "u" },
-		{ "一", "y", "i" }, { "二", "er", "er" }, { "三", "s", "an" }, { "四", "s", "i" },
-		{ "五", "w", "u" }, { "六", "l", "iu" }, { "七", "q", "i" }, { "八", "b", "a" },
-		{ "九", "j", "iu" }, { "十", "sh", "i" }, { "上", "sh", "ang" }, { "下", "x", "ia" },
-		{ "左", "z", "uo" }, { "右", "y", "ou" }, { "中", "zh", "ong" }, { "开", "k", "ai" },
-		{ "关", "g", "uan" }, { "学", "x", "ue" }, { "习", "x", "i" }, { "字", "z", "i" },
-		{ "文", "w", "en" }, { "读", "d", "u" }, { "写", "x", "ie" }, { "画", "h", "ua" },
-	};
-
-	constexpr const char* gInitialPool[] = {
-		"b", "p", "m", "f", "d", "t", "n", "l", "g", "k", "h",
-		"j", "q", "x", "zh", "ch", "sh", "r", "z", "c", "s", "y", "w"
-	};
-	constexpr const char* gFinalPool[] = {
-		"a", "o", "e", "i", "u", "ü", "ai", "ei", "ui", "ao", "ou", "iu",
-		"ie", "üe", "er", "an", "en", "in", "un", "ang", "eng", "ing", "ong",
-		"ia", "iao", "ian", "iang", "iong", "ua", "uo", "uai", "uan", "uang"
-	};
-
-#include "LearningQuizBankData.inc"
+#include "LearningQuizChineseData.inc"
 
 	const Color gOptionColors[4] = {
 		Color(255, 168, 120),
@@ -535,6 +501,225 @@ namespace
 		g->SetColor(theColor);
 		g->DrawString(theText, theCenterX - theFont->StringWidth(theText) / 2, theY);
 	}
+
+	bool StartsWith(const std::string& theText, const char* thePrefix)
+	{
+		const size_t aLen = std::char_traits<char>::length(thePrefix);
+		return theText.size() >= aLen && theText.compare(0, aLen, thePrefix) == 0;
+	}
+
+	std::string ApplyToneMark(const std::string& theBase, int theTone)
+	{
+		if (theTone < 1 || theTone > 4 || theBase.empty())
+			return theBase;
+
+		static const char* kA[] = { "ā", "á", "ǎ", "à" };
+		static const char* kO[] = { "ō", "ó", "ǒ", "ò" };
+		static const char* kE[] = { "ē", "é", "ě", "è" };
+		static const char* kI[] = { "ī", "í", "ǐ", "ì" };
+		static const char* kU[] = { "ū", "ú", "ǔ", "ù" };
+		static const char* kV[] = { "ǖ", "ǘ", "ǚ", "ǜ" };
+
+		auto replaceAscii = [&](size_t thePos, const char* const* theMarks) {
+			return theBase.substr(0, thePos) + theMarks[theTone - 1] + theBase.substr(thePos + 1);
+		};
+
+		for (const char aVowel : { 'a', 'o', 'e' })
+		{
+			const size_t aPos = theBase.find(aVowel);
+			if (aPos == std::string::npos)
+				continue;
+			if (aVowel == 'a')
+				return replaceAscii(aPos, kA);
+			if (aVowel == 'o')
+				return replaceAscii(aPos, kO);
+			return replaceAscii(aPos, kE);
+		}
+
+		const std::string aV = "ü";
+		size_t aBestPos = std::string::npos;
+		const char* const* aBestMarks = nullptr;
+		size_t aBestLen = 1;
+		for (size_t i = 0; i < theBase.size(); )
+		{
+			if (theBase[i] == 'i')
+			{
+				aBestPos = i; aBestMarks = kI; aBestLen = 1; ++i;
+			}
+			else if (theBase[i] == 'u')
+			{
+				aBestPos = i; aBestMarks = kU; aBestLen = 1; ++i;
+			}
+			else if (theBase.compare(i, aV.size(), aV) == 0)
+			{
+				aBestPos = i; aBestMarks = kV; aBestLen = aV.size();
+				i += aV.size();
+			}
+			else
+			{
+				const unsigned char c = static_cast<unsigned char>(theBase[i]);
+				if (c < 0x80)
+					++i;
+				else if ((c & 0xE0) == 0xC0)
+					i += 2;
+				else if ((c & 0xF0) == 0xE0)
+					i += 3;
+				else if ((c & 0xF8) == 0xF0)
+					i += 4;
+				else
+					++i;
+			}
+		}
+		if (aBestPos != std::string::npos && aBestMarks != nullptr)
+			return theBase.substr(0, aBestPos) + aBestMarks[theTone - 1] + theBase.substr(aBestPos + aBestLen);
+		return theBase;
+	}
+
+	std::string BuildSyllableBase(const std::string& theInitial, const std::string& theFinal)
+	{
+		if (theInitial == "er" || theFinal == "er")
+			return "er";
+
+		std::string aIni = theInitial;
+		std::string aFin = theFinal;
+		if ((aIni == "j" || aIni == "q" || aIni == "x") && StartsWith(aFin, "ü"))
+			aFin = "u" + aFin.substr(std::char_traits<char>::length("ü"));
+
+		if (aIni == "y")
+		{
+			if (StartsWith(aFin, "ü"))
+				return "yu" + aFin.substr(std::char_traits<char>::length("ü"));
+			if (StartsWith(aFin, "i"))
+				return (aFin == "i") ? "yi" : aFin;
+			return "y" + aFin;
+		}
+		if (aIni == "w")
+		{
+			if (StartsWith(aFin, "u"))
+				return (aFin == "u") ? "wu" : aFin;
+			return "w" + aFin;
+		}
+		return aIni + aFin;
+	}
+
+	std::string BuildPinyin(const std::string& theInitial, const std::string& theFinal, int theTone)
+	{
+		return ApplyToneMark(BuildSyllableBase(theInitial, theFinal), theTone);
+	}
+
+	std::string ConfusableInitial(const std::string& theInitial)
+	{
+		if (theInitial == "b") return (RandInt(0, 1) == 0) ? "p" : "d";
+		if (theInitial == "p") return (RandInt(0, 1) == 0) ? "b" : "q";
+		if (theInitial == "d") return (RandInt(0, 1) == 0) ? "b" : "t";
+		if (theInitial == "q") return (RandInt(0, 1) == 0) ? "p" : "j";
+		if (theInitial == "z") return "zh";
+		if (theInitial == "c") return "ch";
+		if (theInitial == "s") return "sh";
+		if (theInitial == "zh") return "z";
+		if (theInitial == "ch") return "c";
+		if (theInitial == "sh") return "s";
+		if (theInitial == "n") return "l";
+		if (theInitial == "l") return "n";
+		return {};
+	}
+
+	std::string ConfusableFinal(const std::string& theFinal)
+	{
+		if (theFinal == "an") return "ang";
+		if (theFinal == "ang") return "an";
+		if (theFinal == "en") return "eng";
+		if (theFinal == "eng") return "en";
+		if (theFinal == "in") return "ing";
+		if (theFinal == "ing") return "in";
+		if (theFinal == "ian") return "iang";
+		if (theFinal == "iang") return "ian";
+		if (theFinal == "uan") return "uang";
+		if (theFinal == "uang") return "uan";
+		if (theFinal == "ui") return "iu";
+		if (theFinal == "iu") return "ui";
+		if (theFinal == "ie") return "ei";
+		if (theFinal == "ei") return "ie";
+		return {};
+	}
+
+	std::string MakeConfusablePinyin(const QuizHanzi& theHanzi)
+	{
+		std::vector<std::string> aCandidates;
+		aCandidates.reserve(8);
+
+		const std::string aIni = theHanzi.initial;
+		const std::string aFin = theHanzi.finalNoTone;
+		const int aTone = theHanzi.tone;
+
+		const std::string aAltIni = ConfusableInitial(aIni);
+		if (!aAltIni.empty())
+			aCandidates.push_back(BuildPinyin(aAltIni, aFin, std::max(1, aTone)));
+
+		const std::string aAltFin = ConfusableFinal(aFin);
+		if (!aAltFin.empty())
+			aCandidates.push_back(BuildPinyin(aIni, aAltFin, std::max(1, aTone)));
+
+		if (aTone >= 1 && aTone <= 4)
+		{
+			for (int t = 1; t <= 4; ++t)
+			{
+				if (t == aTone)
+					continue;
+				aCandidates.push_back(BuildPinyin(aIni, aFin, t));
+			}
+		}
+
+		if (!aAltIni.empty() && !aAltFin.empty())
+			aCandidates.push_back(BuildPinyin(aAltIni, aAltFin, std::max(1, aTone)));
+
+		if (aCandidates.empty())
+			return {};
+
+		return aCandidates[RandInt(0, static_cast<int>(aCandidates.size()) - 1)];
+	}
+
+	const QuizHanzi& PickRandomHanzi()
+	{
+		return gQuizHanzi[RandInt(0, static_cast<int>(std::size(gQuizHanzi)) - 1)];
+	}
+
+	std::string RandomPinyinDifferentFrom(const std::string& theCorrect)
+	{
+		for (int attempt = 0; attempt < 40; ++attempt)
+		{
+			const QuizHanzi& aOther = PickRandomHanzi();
+			if (aOther.pinyin != theCorrect)
+				return aOther.pinyin;
+			const std::string aMut = MakeConfusablePinyin(aOther);
+			if (!aMut.empty() && aMut != theCorrect)
+				return aMut;
+		}
+		return "mā";
+	}
+
+	std::string RandomHanziDifferentPinyin(const std::string& theCorrectPinyin, int thePreferGroup)
+	{
+		if (thePreferGroup > 0)
+		{
+			std::vector<const QuizHanzi*> aGroup;
+			for (const QuizHanzi& aItem : gQuizHanzi)
+			{
+				if (aItem.lookalikeGroup == thePreferGroup && aItem.pinyin != theCorrectPinyin)
+					aGroup.push_back(&aItem);
+			}
+			if (!aGroup.empty())
+				return aGroup[RandInt(0, static_cast<int>(aGroup.size()) - 1)]->ch;
+		}
+
+		for (int attempt = 0; attempt < 40; ++attempt)
+		{
+			const QuizHanzi& aOther = PickRandomHanzi();
+			if (aOther.pinyin != theCorrectPinyin)
+				return aOther.ch;
+		}
+		return "天";
+	}
 }
 
 LearningQuizQuestion GenerateMixedMathLearningQuiz()
@@ -542,7 +727,7 @@ LearningQuizQuestion GenerateMixedMathLearningQuiz()
 	LearningQuizQuestion aQuestion;
 	aQuestion.mKind = LearningQuizKind::MathMixed;
 	aQuestion.mTitle = "三数加减";
-	aQuestion.mPrompt = "从左到右算，中间不能出现负数哦！";
+	aQuestion.mPrompt = "从左到右算一算";
 
 	int a = 1, b = 1, c = 1, aAnswer = 0;
 	bool aAdd1 = true, aAdd2 = true;
@@ -584,65 +769,55 @@ LearningQuizQuestion GenerateMixedMathLearningQuiz()
 	return aQuestion;
 }
 
-LearningQuizQuestion GeneratePinyinLearningQuiz()
+LearningQuizQuestion GenerateHanziToPinyinLearningQuiz()
 {
 	LearningQuizQuestion aQuestion;
-	const Grade1Hanzi& aHanzi = gGrade1Hanzi[RandInt(0, static_cast<int>(std::size(gGrade1Hanzi)) - 1)];
-	const bool aAskInitial = (std::string(aHanzi.initial) != "er") && RandInt(0, 1) == 0;
+	const QuizHanzi& aHanzi = PickRandomHanzi();
+	aQuestion.mKind = LearningQuizKind::HanziToPinyin;
+	aQuestion.mTitle = "看字选拼音";
+	aQuestion.mPrompt = "选出这个汉字正确的拼音";
 	aQuestion.mBigText = aHanzi.ch;
 	aQuestion.mCorrectIndex = 0;
-	if (aAskInitial)
-	{
-		aQuestion.mKind = LearningQuizKind::PinyinInitial;
-		aQuestion.mTitle = "拼音小课堂";
-		aQuestion.mPrompt = "这个字的声母是？";
-		aQuestion.mOptions[0] = aHanzi.initial;
-		FillUniqueDistractors(aQuestion.mOptions, 0, []() {
-			return std::string(gInitialPool[RandInt(0, static_cast<int>(std::size(gInitialPool)) - 1)]);
-		});
-	}
-	else
-	{
-		aQuestion.mKind = LearningQuizKind::PinyinFinal;
-		aQuestion.mTitle = "拼音小课堂";
-		aQuestion.mPrompt = "这个字的韵母是？";
-		aQuestion.mOptions[0] = aHanzi.finalSyllable;
-		FillUniqueDistractors(aQuestion.mOptions, 0, []() {
-			return std::string(gFinalPool[RandInt(0, static_cast<int>(std::size(gFinalPool)) - 1)]);
-		});
-	}
+	aQuestion.mOptions[0] = aHanzi.pinyin;
+
+	// Prefer confusable distractors (形近声母 / 平翘舌 / 前后鼻音 / 易混韵母 / 声调).
+	FillUniqueDistractors(aQuestion.mOptions, 0, [&aHanzi]() {
+		const std::string aConfusable = MakeConfusablePinyin(aHanzi);
+		if (!aConfusable.empty() && aConfusable != aHanzi.pinyin)
+			return aConfusable;
+		return RandomPinyinDifferentFrom(aHanzi.pinyin);
+	});
 	ShuffleOptions(aQuestion);
 	return aQuestion;
 }
 
-LearningQuizQuestion GenerateBankLearningQuiz()
+LearningQuizQuestion GeneratePinyinToHanziLearningQuiz()
 {
 	LearningQuizQuestion aQuestion;
-	if (std::size(gBankQuizEntries) == 0)
-		return GenerateMixedMathLearningQuiz();
+	const QuizHanzi& aHanzi = PickRandomHanzi();
+	aQuestion.mKind = LearningQuizKind::PinyinToHanzi;
+	aQuestion.mTitle = "看拼音选字";
+	aQuestion.mPrompt = "选出这个拼音对应的汉字";
+	aQuestion.mBigText = aHanzi.pinyin;
+	aQuestion.mCorrectIndex = 0;
+	aQuestion.mOptions[0] = aHanzi.ch;
 
-	const BankQuizEntry& aEntry = gBankQuizEntries[RandInt(0, static_cast<int>(std::size(gBankQuizEntries)) - 1)];
-	aQuestion.mKind = LearningQuizKind::Bank;
-	aQuestion.mTitle = aEntry.title;
-	aQuestion.mPrompt = "请选出正确答案";
-	aQuestion.mBigText = aEntry.stem;
-	aQuestion.mCorrectIndex = std::clamp(aEntry.correctIndex, 0, 3);
-	for (int i = 0; i < 4; ++i)
-		aQuestion.mOptions[i] = aEntry.options[i] ? aEntry.options[i] : "?";
+	// Prefer lookalike characters with a different reading.
+	FillUniqueDistractors(aQuestion.mOptions, 0, [&aHanzi]() {
+		return RandomHanziDifferentPinyin(aHanzi.pinyin, aHanzi.lookalikeGroup);
+	});
 	ShuffleOptions(aQuestion);
 	return aQuestion;
 }
 
 LearningQuizQuestion GenerateRandomLearningQuiz()
 {
-	// 50% from downloaded bank, 50% randomly generated.
-	if (!std::empty(gBankQuizEntries) && RandInt(0, 1) == 0)
-		return GenerateBankLearningQuiz();
-
-	// Within generated questions: mostly mixed math, some pinyin.
-	if (RandInt(0, 99) < 75)
+	// 50% math, 50% Chinese; Chinese splits evenly into 汉字↔拼音.
+	if (RandInt(0, 1) == 0)
 		return GenerateMixedMathLearningQuiz();
-	return GeneratePinyinLearningQuiz();
+	if (RandInt(0, 1) == 0)
+		return GenerateHanziToPinyinLearningQuiz();
+	return GeneratePinyinToHanziLearningQuiz();
 }
 
 LearningQuizDialog::LearningQuizDialog(LawnApp* theApp, LearningQuizPurpose thePurpose) :
@@ -686,10 +861,9 @@ void LearningQuizDialog::RebuildTextImages()
 	mTitleImage = RasterizeUtf8Text(mQuestion.mTitle, 28, Color(255, 255, 255));
 	mPromptImage = RasterizeUtf8Text(mQuestion.mPrompt, 22, Color(80, 100, 75));
 
-	const bool aBank = mQuestion.mKind == LearningQuizKind::Bank;
-	const int aBigSize = aBank ? 22 : (NeedsSysFont(mQuestion.mBigText) ? 56 : 40);
-	const int aBigMaxW = aBank ? (mWidth - 100) : 0;
-	mBigTextImage = RasterizeUtf8Text(mQuestion.mBigText, aBigSize, Color(45, 90, 65), aBigMaxW);
+	const bool aPinyinPrompt = mQuestion.mKind == LearningQuizKind::PinyinToHanzi;
+	const int aBigSize = aPinyinPrompt ? 44 : (NeedsSysFont(mQuestion.mBigText) ? 56 : 40);
+	mBigTextImage = RasterizeUtf8Text(mQuestion.mBigText, aBigSize, Color(45, 90, 65));
 	mFeedbackImage.reset();
 	for (int i = 0; i < 4; ++i)
 	{
