@@ -230,10 +230,11 @@ enum UltimateType : int32_t
 	ULTIMATE_PEA_BARRAGE = 1,     // 豌豆：每路混合 7普/7冰/7火/7刺
 	ULTIMATE_JALAPENO_ALL = 2,    // 火爆辣椒：每路火焰
 	ULTIMATE_HYPNO_ALLIES = 3,    // 魅惑菇：每路左侧友方僵尸
-	ULTIMATE_STAR_STORM = 4,      // 杨桃：每个格子发射一次
+	ULTIMATE_STAR_STORM = 4,      // 杨桃：全屏齐射 5 波
 	ULTIMATE_COB_BARRAGE = 5,     // 玉米加农炮：从中向右轰 10 次
-	ULTIMATE_CHERRY_BOMBS = 6,    // 樱桃炸弹：全部格子爆炸一次
+	ULTIMATE_CHERRY_BOMBS = 6,    // 樱桃炸弹：从左到右按列爆炸
 	ULTIMATE_PUMPKIN_SHIELD = 7,  // 南瓜：给场上植物套南瓜
+	ULTIMATE_PLANT_UPGRADE = 8,   // 机枪射手：场上植物各升一级
 	NUM_ULTIMATE_TYPES
 };
 enum CursorType : int32_t

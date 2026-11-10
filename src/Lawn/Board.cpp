@@ -4092,7 +4092,9 @@ namespace
 	constexpr int ULTIMATE_LANE_SHOT_INTERVAL = 6;
 	constexpr int ULTIMATE_COB_SHOTS = 10;
 	constexpr int ULTIMATE_COB_SHOT_INTERVAL = 18;
-	constexpr int ULTIMATE_STAR_BURST_INTERVAL = 2;
+	constexpr int ULTIMATE_STAR_STORM_WAVES = 5;
+	constexpr int ULTIMATE_STAR_STORM_INTERVAL = 12;
+	constexpr int ULTIMATE_CHERRY_COL_INTERVAL = 12;
 
 	// Fixed mix that looks shuffled: exactly 7 of each projectile type.
 	constexpr ProjectileType kUltimatePeaMixSequence[ULTIMATE_PEA_MIX_SHOTS] = {
@@ -4126,55 +4128,45 @@ namespace
 		ProjectileType::PROJECTILE_PEA,
 	};
 
-	ZombieType PickHypnoAllyZombieType(Board* theBoard, int theRow)
-	{
-		const bool aPoolRow = theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_POOL;
-		PvzpWeightedArray aWeights[24];
-		int aCount = 0;
-		auto add = [&](ZombieType theType, int theWeight) {
-			if (theWeight <= 0 || aCount >= 24)
-				return;
+		ZombieType PickHypnoAllyZombieType(Board* theBoard, int theRow)
+		{
+			const bool aPoolRow = theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_POOL;
+			PvzpWeightedArray aWeights[12];
+			int aCount = 0;
+			auto add = [&](ZombieType theType, int theWeight) {
+				if (theWeight <= 0 || aCount >= 12)
+					return;
+				if (theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_HIGH_GROUND &&
+					!Zombie::ZombieTypeCanGoOnHighGround(theType))
+					return;
+
+				aWeights[aCount].mItem = theType;
+				aWeights[aCount].mWeight = theWeight;
+				++aCount;
+			};
+
+			// Restricted ally pool: avoid dancer (spawns backup dancers that walk into the house).
 			if (aPoolRow)
 			{
-				if (!Zombie::ZombieTypeCanGoInPool(theType) && theType != ZombieType::ZOMBIE_BALLOON)
-					return;
+				add(ZombieType::ZOMBIE_SNORKEL, 24);
+				add(ZombieType::ZOMBIE_DOLPHIN_RIDER, 22);
 			}
-			else if (Board::IsZombieTypePoolOnly(theType))
+			else
 			{
-				return;
+				add(ZombieType::ZOMBIE_FLAG, 10);
+				add(ZombieType::ZOMBIE_TRAFFIC_CONE, 14);
+				add(ZombieType::ZOMBIE_PAIL, 28);
+				add(ZombieType::ZOMBIE_POLEVAULTER, 16);
+				add(ZombieType::ZOMBIE_NEWSPAPER, 16);
+				add(ZombieType::ZOMBIE_FOOTBALL, 32);
+				add(ZombieType::ZOMBIE_YETI, 12);
+				add(ZombieType::ZOMBIE_LADDER, 18);
 			}
-			if (theBoard->mPlantRow[theRow] == PlantRowType::PLANTROW_HIGH_GROUND &&
-				!Zombie::ZombieTypeCanGoOnHighGround(theType))
-				return;
 
-			aWeights[aCount].mItem = theType;
-			aWeights[aCount].mWeight = theWeight;
-			++aCount;
-		};
-
-		// Low weight for basic; high weight for elites.
-		// No Gargantuar / Red-eye: hypnotized ones smash ally plants and don't fight zombies.
-		add(ZombieType::ZOMBIE_NORMAL, 4);
-		add(ZombieType::ZOMBIE_TRAFFIC_CONE, 14);
-		add(ZombieType::ZOMBIE_POLEVAULTER, 16);
-		add(ZombieType::ZOMBIE_PAIL, 28);
-		add(ZombieType::ZOMBIE_NEWSPAPER, 16);
-		add(ZombieType::ZOMBIE_DOOR, 22);
-		add(ZombieType::ZOMBIE_FOOTBALL, 32);
-		add(ZombieType::ZOMBIE_JACK_IN_THE_BOX, 18);
-		add(ZombieType::ZOMBIE_LADDER, 18);
-		add(ZombieType::ZOMBIE_POGO, 14);
-		add(ZombieType::ZOMBIE_YETI, 12);
-		add(ZombieType::ZOMBIE_IMP, 10);
-		add(ZombieType::ZOMBIE_BALLOON, 12);
-		add(ZombieType::ZOMBIE_DANCER, 10);
-		add(ZombieType::ZOMBIE_SNORKEL, 24);
-		add(ZombieType::ZOMBIE_DOLPHIN_RIDER, 22);
-
-		if (aCount <= 0)
-			return ZombieType::ZOMBIE_NORMAL;
-		return static_cast<ZombieType>(PvzpPickFromWeightedArray(aWeights, aCount));
-	}
+			if (aCount <= 0)
+				return aPoolRow ? ZombieType::ZOMBIE_SNORKEL : ZombieType::ZOMBIE_FLAG;
+			return static_cast<ZombieType>(PvzpPickFromWeightedArray(aWeights, aCount));
+		}
 
 	std::unique_ptr<MemoryImage> gUltimateLabelImage;
 
@@ -4339,6 +4331,7 @@ SeedType Board::GetUltimateSeedIcon(UltimateType theType) const
 	case UltimateType::ULTIMATE_COB_BARRAGE: return SeedType::SEED_COBCANNON;
 	case UltimateType::ULTIMATE_CHERRY_BOMBS: return SeedType::SEED_CHERRYBOMB;
 	case UltimateType::ULTIMATE_PUMPKIN_SHIELD: return SeedType::SEED_PUMPKINSHELL;
+	case UltimateType::ULTIMATE_PLANT_UPGRADE: return SeedType::SEED_GATLINGPEA;
 	default: return SeedType::SEED_PEASHOOTER;
 	}
 }
@@ -4481,62 +4474,62 @@ void Board::FireUltimateCobShot(int theShotIndex)
 	ShakeBoard(1, -2);
 }
 
-int Board::CountUltimateStarPositions() const
+void Board::FireUltimateCherryColumn(int theCol)
 {
-	int aCount = 0;
+	if (theCol < 0 || theCol >= MAX_GRID_SIZE_X)
+		return;
+
+	mApp->PlayFoley(FoleyType::FOLEY_CHERRYBOMB);
+	mApp->PlayFoley(FoleyType::FOLEY_JUICY);
 	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
 	{
 		if (!IsPlayablePlantRow(aRow))
 			continue;
-		aCount += MAX_GRID_SIZE_X;
+
+		const int aPosX = GridToPixelX(theCol, aRow) + 40;
+		const int aPosY = GridToPixelY(theCol, aRow) + 40;
+		KillAllZombiesInRadius(aRow, aPosX, aPosY, 115, 1, true, 127);
+		mApp->AddPvzpParticle(
+			static_cast<float>(aPosX),
+			static_cast<float>(aPosY),
+			MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, aRow, 0),
+			ParticleEffect::PARTICLE_POWIE
+		);
 	}
-	return aCount;
+	ShakeBoard(1, -2);
 }
 
-void Board::FireUltimateStarBurstAtIndex(int theIndex)
+void Board::FireUltimateStarStormWave()
 {
-	int aSeen = 0;
-	int aCol = -1;
-	int aRow = -1;
-	for (int r = 0; r < MAX_GRID_SIZE_Y; ++r)
-	{
-		if (!IsPlayablePlantRow(r))
-			continue;
-		for (int c = 0; c < MAX_GRID_SIZE_X; ++c)
-		{
-			if (aSeen == theIndex)
-			{
-				aRow = r;
-				aCol = c;
-				break;
-			}
-			++aSeen;
-		}
-		if (aCol >= 0)
-			break;
-	}
-	if (aCol < 0 || aRow < 0)
-		return;
-
 	mApp->PlayFoley(FoleyType::FOLEY_THROW);
-	const float aCenterX = static_cast<float>(GridToPixelX(aCol, aRow) + 40);
-	const float aCenterY = static_cast<float>(GridToPixelY(aCol, aRow) + 40);
-	const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
 	const float aShootAngleX = cos(DEG_TO_RAD(30.0f)) * 3.33f;
 	const float aShootAngleY = sin(DEG_TO_RAD(30.0f)) * 3.33f;
-	for (int i = 0; i < 5; ++i)
+
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
 	{
-		Projectile* aStar = AddProjectile(static_cast<int>(aCenterX), static_cast<int>(aCenterY), aRenderOrder, aRow, ProjectileType::PROJECTILE_STAR);
-		aStar->mDamageRangeFlags = 1;
-		aStar->mMotionType = ProjectileMotion::MOTION_STAR;
-		switch (i)
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+
+		const int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PROJECTILE, aRow, 0);
+		for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
 		{
-		case 0: aStar->mVelX = -3.33f; aStar->mVelY = 0.0f; break;
-		case 1: aStar->mVelX = 0.0f; aStar->mVelY = 3.33f; break;
-		case 2: aStar->mVelX = 0.0f; aStar->mVelY = -3.33f; break;
-		case 3: aStar->mVelX = aShootAngleX; aStar->mVelY = aShootAngleY; break;
-		case 4: aStar->mVelX = aShootAngleX; aStar->mVelY = -aShootAngleY; break;
-		default: break;
+			const float aCenterX = static_cast<float>(GridToPixelX(aCol, aRow) + 40);
+			const float aCenterY = static_cast<float>(GridToPixelY(aCol, aRow) + 40);
+			for (int i = 0; i < 5; ++i)
+			{
+				Projectile* aStar = AddProjectile(static_cast<int>(aCenterX), static_cast<int>(aCenterY), aRenderOrder, aRow, ProjectileType::PROJECTILE_STAR);
+				aStar->mDamageRangeFlags = 1;
+				aStar->mMotionType = ProjectileMotion::MOTION_STAR;
+				switch (i)
+				{
+				case 0: aStar->mVelX = -3.33f; aStar->mVelY = 0.0f; break;
+				case 1: aStar->mVelX = 0.0f; aStar->mVelY = 3.33f; break;
+				case 2: aStar->mVelX = 0.0f; aStar->mVelY = -3.33f; break;
+				case 3: aStar->mVelX = aShootAngleX; aStar->mVelY = aShootAngleY; break;
+				case 4: aStar->mVelX = aShootAngleX; aStar->mVelY = -aShootAngleY; break;
+				default: break;
+				}
+			}
 		}
 	}
 }
@@ -4566,20 +4559,25 @@ void Board::UpdateUltimateBarrage()
 		mUltimateBarrageTimer = ULTIMATE_LANE_SHOT_INTERVAL;
 		break;
 	}
-	case UltimateType::ULTIMATE_COB_BARRAGE:
-		FireUltimateCobShot(mUltimateBarrageIndex);
-		++mUltimateBarrageIndex;
-		mUltimateBarrageTimer = ULTIMATE_COB_SHOT_INTERVAL;
-		break;
-	case UltimateType::ULTIMATE_STAR_STORM:
-		FireUltimateStarBurstAtIndex(mUltimateBarrageIndex);
-		++mUltimateBarrageIndex;
-		mUltimateBarrageTimer = ULTIMATE_STAR_BURST_INTERVAL;
-		break;
-	default:
-		mUltimateBarrageLeft = 0;
-		return;
-	}
+		case UltimateType::ULTIMATE_COB_BARRAGE:
+			FireUltimateCobShot(mUltimateBarrageIndex);
+			++mUltimateBarrageIndex;
+			mUltimateBarrageTimer = ULTIMATE_COB_SHOT_INTERVAL;
+			break;
+		case UltimateType::ULTIMATE_CHERRY_BOMBS:
+			FireUltimateCherryColumn(mUltimateBarrageIndex);
+			++mUltimateBarrageIndex;
+			mUltimateBarrageTimer = ULTIMATE_CHERRY_COL_INTERVAL;
+			break;
+		case UltimateType::ULTIMATE_STAR_STORM:
+			FireUltimateStarStormWave();
+			++mUltimateBarrageIndex;
+			mUltimateBarrageTimer = ULTIMATE_STAR_STORM_INTERVAL;
+			break;
+		default:
+			mUltimateBarrageLeft = 0;
+			return;
+		}
 
 	--mUltimateBarrageLeft;
 }
@@ -4665,6 +4663,7 @@ void Board::CastUltimate(UltimateType theType)
 	case UltimateType::ULTIMATE_COB_BARRAGE: CastCobBarrageUltimate(); break;
 	case UltimateType::ULTIMATE_CHERRY_BOMBS: CastCherryBombsUltimate(); break;
 	case UltimateType::ULTIMATE_PUMPKIN_SHIELD: CastPumpkinShieldUltimate(); break;
+	case UltimateType::ULTIMATE_PLANT_UPGRADE: CastPlantUpgradeUltimate(); break;
 	default: break;
 	}
 }
@@ -4759,12 +4758,9 @@ void Board::CastHypnoAlliesUltimate()
 
 void Board::CastStarStormUltimate()
 {
-	const int aPositions = CountUltimateStarPositions();
-	if (aPositions <= 0)
-		return;
-
+	// 5 full-screen starfruit volleys, ~12 frames apart.
 	mUltimateBarrageType = UltimateType::ULTIMATE_STAR_STORM;
-	mUltimateBarrageLeft = aPositions;
+	mUltimateBarrageLeft = ULTIMATE_STAR_STORM_WAVES;
 	mUltimateBarrageTimer = 0;
 	mUltimateBarrageIndex = 0;
 	UpdateUltimateBarrage();
@@ -4781,51 +4777,126 @@ void Board::CastCobBarrageUltimate()
 
 void Board::CastCherryBombsUltimate()
 {
-	mApp->PlayFoley(FoleyType::FOLEY_CHERRYBOMB);
-	mApp->PlayFoley(FoleyType::FOLEY_JUICY);
-	ShakeBoard(3, -4);
+	// Left-to-right column wave, same barrage pacing style as cob cannon.
+	mUltimateBarrageType = UltimateType::ULTIMATE_CHERRY_BOMBS;
+	mUltimateBarrageLeft = MAX_GRID_SIZE_X;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	UpdateUltimateBarrage();
+}
 
+void Board::CastPumpkinShieldUltimate()
+{
+	mApp->PlayFoley(FoleyType::FOLEY_PLANT);
 	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
 	{
 		if (!IsPlayablePlantRow(aRow))
 			continue;
 		for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
 		{
-			const int aPosX = GridToPixelX(aCol, aRow) + 40;
-			const int aPosY = GridToPixelY(aCol, aRow) + 40;
-			KillAllZombiesInRadius(aRow, aPosX, aPosY, 115, 1, true, 127);
-			mApp->AddPvzpParticle(
-				static_cast<float>(aPosX),
-				static_cast<float>(aPosY),
-				MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, aRow, 0),
-				ParticleEffect::PARTICLE_POWIE
-			);
+			PlantsOnLawn aPlantsOnLawn;
+			GetPlantsOnLawn(aCol, aRow, &aPlantsOnLawn);
+			// Only cover cells that already have a plant (not empty tiles).
+			if (!aPlantsOnLawn.mNormalPlant && !aPlantsOnLawn.mUnderPlant && !aPlantsOnLawn.mFlyingPlant)
+				continue;
+			if (aPlantsOnLawn.mPumpkinPlant)
+				continue;
+			if (CanPlantAt(aCol, aRow, SeedType::SEED_PUMPKINSHELL) != PlantingReason::PLANTING_OK)
+				continue;
+			AddPlant(aCol, aRow, SeedType::SEED_PUMPKINSHELL);
 		}
 	}
 }
 
-	void Board::CastPumpkinShieldUltimate()
+void Board::CastPlantUpgradeUltimate()
+{
+	// One-step upgrades only. No cob cannon / cattail.
+	struct UpgradeJob
 	{
-		mApp->PlayFoley(FoleyType::FOLEY_PLANT);
-		for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+		int mCol = 0;
+		int mRow = 0;
+		SeedType mTo = SeedType::SEED_NONE;
+		bool mWasAwake = false;
+		int mWakeUpCounter = 0;
+	};
+
+	auto oneStepUpgrade = [](SeedType theFrom) -> SeedType {
+		switch (theFrom)
 		{
-			if (!IsPlayablePlantRow(aRow))
+		case SeedType::SEED_SUNFLOWER:   return SeedType::SEED_TWINSUNFLOWER;
+		case SeedType::SEED_PEASHOOTER:  return SeedType::SEED_REPEATER;
+		case SeedType::SEED_REPEATER:    return SeedType::SEED_GATLINGPEA;
+		case SeedType::SEED_WALLNUT:     return SeedType::SEED_TALLNUT;
+		case SeedType::SEED_MELONPULT:   return SeedType::SEED_WINTERMELON;
+		case SeedType::SEED_SPIKEWEED:   return SeedType::SEED_SPIKEROCK;
+		case SeedType::SEED_FUMESHROOM:  return SeedType::SEED_GLOOMSHROOM;
+		case SeedType::SEED_MAGNETSHROOM:return SeedType::SEED_GOLD_MAGNET;
+		default:                         return SeedType::SEED_NONE;
+		}
+	};
+
+	std::vector<UpgradeJob> aJobs;
+	aJobs.reserve(32);
+	for (int aRow = 0; aRow < MAX_GRID_SIZE_Y; ++aRow)
+	{
+		if (!IsPlayablePlantRow(aRow))
+			continue;
+		for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
+		{
+			Plant* aPlant = GetTopPlantAt(aCol, aRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+			if (!aPlant || aPlant->mDead || aPlant->NotOnGround())
 				continue;
-			for (int aCol = 0; aCol < MAX_GRID_SIZE_X; ++aCol)
-			{
-				PlantsOnLawn aPlantsOnLawn;
-				GetPlantsOnLawn(aCol, aRow, &aPlantsOnLawn);
-				// Only cover cells that already have a plant (not empty tiles).
-				if (!aPlantsOnLawn.mNormalPlant && !aPlantsOnLawn.mUnderPlant && !aPlantsOnLawn.mFlyingPlant)
-					continue;
-				if (aPlantsOnLawn.mPumpkinPlant)
-					continue;
-				if (CanPlantAt(aCol, aRow, SeedType::SEED_PUMPKINSHELL) != PlantingReason::PLANTING_OK)
-					continue;
-				AddPlant(aCol, aRow, SeedType::SEED_PUMPKINSHELL);
-			}
+
+			SeedType aFrom = aPlant->mSeedType;
+			if (aFrom == SeedType::SEED_IMITATER && aPlant->mImitaterType != SeedType::SEED_NONE)
+				aFrom = aPlant->mImitaterType;
+
+			const SeedType aTo = oneStepUpgrade(aFrom);
+			if (aTo == SeedType::SEED_NONE)
+				continue;
+
+			UpgradeJob aJob;
+			aJob.mCol = aCol;
+			aJob.mRow = aRow;
+			aJob.mTo = aTo;
+			aJob.mWasAwake = !aPlant->mIsAsleep;
+			aJob.mWakeUpCounter = aPlant->mWakeUpCounter;
+			aJobs.push_back(aJob);
 		}
 	}
+
+	if (aJobs.empty())
+		return;
+
+	mApp->PlayFoley(FoleyType::FOLEY_PLANT);
+	for (const UpgradeJob& aJob : aJobs)
+	{
+		Plant* aOld = GetTopPlantAt(aJob.mCol, aJob.mRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+		if (!aOld || aOld->mDead)
+			continue;
+
+		aOld->Die();
+		Plant* aNew = AddPlant(aJob.mCol, aJob.mRow, aJob.mTo);
+		if (!aNew)
+			continue;
+
+		// Match shop gloom upgrade: keep awake / coffee wake countdown.
+		if (aJob.mTo == SeedType::SEED_GLOOMSHROOM)
+		{
+			if (aJob.mWasAwake)
+				aNew->SetSleeping(false);
+			else
+				aNew->mWakeUpCounter = aJob.mWakeUpCounter;
+		}
+
+		mApp->AddPvzpParticle(
+			static_cast<float>(GridToPixelX(aJob.mCol, aJob.mRow) + 40),
+			static_cast<float>(GridToPixelY(aJob.mCol, aJob.mRow) + 40),
+			MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, aJob.mRow, 0),
+			ParticleEffect::PARTICLE_PLANTING
+		);
+	}
+}
 
 Plant* Board::ToolHitTestHelper(const HitResult* theHitResult)
 {

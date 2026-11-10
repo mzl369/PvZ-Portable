@@ -381,12 +381,13 @@ public:
 	void							CastCobBarrageUltimate();
 	void							CastCherryBombsUltimate();
 	void							CastPumpkinShieldUltimate();
+	void							CastPlantUpgradeUltimate();
 	void							UltimateBurnRow(int theRow);
 	void							UpdateUltimateBarrage();
 	void							FireUltimateLaneProjectile(ProjectileType theType, int theDamageFlags, bool theConvertToFireball = false);
 	void							FireUltimateCobShot(int theShotIndex);
-	void							FireUltimateStarBurstAtIndex(int theIndex);
-	int								CountUltimateStarPositions() const;
+	void							FireUltimateCherryColumn(int theCol);
+	void							FireUltimateStarStormWave();
 	bool							IsPlayablePlantRow(int theRow) const;
 //	inline void						MouseDownNormal(int x, int y, int theClickCount) { /* not found */; }
 	bool							CanInteractWithBoardButtons();
