@@ -334,6 +334,7 @@ enum Dialogs : int32_t
 	DIALOG_ZOMBATAR_TOS,                        // 51: terms of service
 	DIALOG_ZOMBATAR_DELETE,                     // 52
 	DIALOG_LEARNING_QUIZ,                       // 53: plant-to-learn quiz popup
+	DIALOG_ULTIMATE_CHOOSER,                    // 54: pick which ultimate to cast
 	NUM_DIALOGS
 };
 enum DebugTextMode : int32_t

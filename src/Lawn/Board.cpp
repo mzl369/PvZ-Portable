@@ -41,6 +41,7 @@
 #include "System/SaveGame.h"
 #include "Widget/LawnDialog.h"
 #include "Widget/LearningQuizDialog.h"
+#include "Widget/UltimateChooserDialog.h"
 #include "System/PlayerInfo.h"
 #include "System/PoolEffect.h"
 #include "System/TypingCheck.h"
@@ -4048,10 +4049,11 @@ void Board::FailLearningQuizPlant()
 	DisplayAdvice("答错了，扣除25阳光！", MessageStyle::MESSAGE_STYLE_HINT_FAST, AdviceType::ADVICE_NONE);
 }
 
-void Board::StartLearningQuizUltimate()
+void Board::StartLearningQuizUltimate(UltimateType theType)
 {
+	mUltimateType = theType;
 	mPendingUltimateQuiz.mActive = true;
-	mPendingUltimateQuiz.mType = mUltimateType;
+	mPendingUltimateQuiz.mType = theType;
 
 	LearningQuizDialog* aDialog = new LearningQuizDialog(mApp, LearningQuizPurpose::Ultimate);
 	LawnApp::CenterDialog(aDialog, aDialog->mWidth, aDialog->mHeight);
@@ -4066,9 +4068,8 @@ void Board::FinishLearningQuizUltimate()
 
 	const UltimateType aCastType = mPendingUltimateQuiz.mType;
 	mPendingUltimateQuiz = {};
-	mUltimateNoRepeat = aCastType;
 	CastUltimate(aCastType);
-	StartUltimateCooldownAndSpin();
+	StartUltimateCooldown();
 }
 
 void Board::FailLearningQuizUltimate()
@@ -4076,17 +4077,14 @@ void Board::FailLearningQuizUltimate()
 	if (!mPendingUltimateQuiz.mActive)
 		return;
 
-	const UltimateType aAttempted = mPendingUltimateQuiz.mType;
 	mPendingUltimateQuiz = {};
-	mUltimateNoRepeat = aAttempted;
 	// Wrong answer: no cast, but still enter cooldown.
-	StartUltimateCooldownAndSpin();
+	StartUltimateCooldown();
 	DisplayAdvice("答错了，大招进入冷却！", MessageStyle::MESSAGE_STYLE_HINT_FAST, AdviceType::ADVICE_NONE);
 }
 
 namespace
 {
-	constexpr int ULTIMATE_SPIN_TIME = 260;
 	constexpr int ULTIMATE_COOLDOWN_TIME = 3000; // 30 seconds @ ~100 ticks/sec
 	constexpr int ULTIMATE_PEA_MIX_SHOTS = 28; // 7 pea + 7 snow + 7 fire + 7 spike
 	constexpr int ULTIMATE_LANE_SHOT_INTERVAL = 6;
@@ -4145,18 +4143,16 @@ namespace
 				++aCount;
 			};
 
-			// Restricted ally pool: avoid dancer (spawns backup dancers that walk into the house).
+			// Restricted ally pool: no dancer/backup, no pole vault / dolphin (vault jumps left into house).
 			if (aPoolRow)
 			{
 				add(ZombieType::ZOMBIE_SNORKEL, 24);
-				add(ZombieType::ZOMBIE_DOLPHIN_RIDER, 22);
 			}
 			else
 			{
 				add(ZombieType::ZOMBIE_FLAG, 10);
 				add(ZombieType::ZOMBIE_TRAFFIC_CONE, 14);
 				add(ZombieType::ZOMBIE_PAIL, 28);
-				add(ZombieType::ZOMBIE_POLEVAULTER, 16);
 				add(ZombieType::ZOMBIE_NEWSPAPER, 16);
 				add(ZombieType::ZOMBIE_FOOTBALL, 32);
 				add(ZombieType::ZOMBIE_YETI, 12);
@@ -4336,50 +4332,31 @@ SeedType Board::GetUltimateSeedIcon(UltimateType theType) const
 	}
 }
 
-UltimateType Board::PickRandomUltimateType(UltimateType theAvoid) const
+void Board::InitUltimateAbility()
 {
-	const int aCount = static_cast<int>(UltimateType::NUM_ULTIMATE_TYPES);
-	if (aCount <= 1)
-		return UltimateType::ULTIMATE_SUN_GEYSER;
-
-	UltimateType aType = static_cast<UltimateType>(Rand(aCount));
-	if (aType == theAvoid)
-		aType = static_cast<UltimateType>((static_cast<int>(aType) + 1 + Rand(aCount - 1)) % aCount);
-	return aType;
+	mUltimateType = UltimateType::ULTIMATE_SUN_GEYSER;
+	mUltimateBarrageLeft = 0;
+	mUltimateBarrageTimer = 0;
+	mUltimateBarrageIndex = 0;
+	mUltimateBarrageType = UltimateType::NUM_ULTIMATE_TYPES;
+	// Each new game/level starts with ultimate on cooldown.
+	mUltimateReady = false;
+	mUltimateRefreshing = true;
+	mUltimateRefreshCounter = 0;
+	mUltimateRefreshTime = ULTIMATE_COOLDOWN_TIME;
+	if (mUltimateButton)
+	{
+		mUltimateButton->mBtnNoDraw = !ShouldShowUltimateButton();
+		mUltimateButton->mDisabled = !ShouldShowUltimateButton();
+	}
 }
 
-	void Board::InitUltimateAbility()
-	{
-		mUltimateNoRepeat = UltimateType::NUM_ULTIMATE_TYPES;
-		mUltimateType = PickRandomUltimateType();
-		mUltimateSpinNext = PickRandomUltimateType(mUltimateType);
-		mUltimateSpinPosition = 0.0f;
-		mUltimateSpinCountDown = 0;
-		mUltimateBarrageLeft = 0;
-		mUltimateBarrageTimer = 0;
-		mUltimateBarrageIndex = 0;
-		mUltimateBarrageType = UltimateType::NUM_ULTIMATE_TYPES;
-		// Each new game/level starts with ultimate on cooldown.
-		mUltimateReady = false;
-		mUltimateRefreshing = true;
-		mUltimateRefreshCounter = 0;
-		mUltimateRefreshTime = ULTIMATE_COOLDOWN_TIME;
-		if (mUltimateButton)
-		{
-			mUltimateButton->mBtnNoDraw = !ShouldShowUltimateButton();
-			mUltimateButton->mDisabled = !ShouldShowUltimateButton();
-		}
-	}
-
-void Board::StartUltimateCooldownAndSpin()
+void Board::StartUltimateCooldown()
 {
 	mUltimateReady = false;
 	mUltimateRefreshing = true;
 	mUltimateRefreshCounter = 0;
 	mUltimateRefreshTime = ULTIMATE_COOLDOWN_TIME;
-	mUltimateSpinCountDown = ULTIMATE_SPIN_TIME;
-	mUltimateSpinPosition = 0.0f;
-	mUltimateSpinNext = PickRandomUltimateType(mUltimateNoRepeat);
 }
 
 void Board::UpdateUltimateAbility()
@@ -4406,26 +4383,6 @@ void Board::UpdateUltimateAbility()
 				ParticleEffect::PARTICLE_SEED_PACKET_FLASH
 			);
 			mApp->PlaySample(Sexy::SOUND_LOADINGBAR_FLOWER);
-		}
-	}
-
-	if (mUltimateSpinCountDown > 0)
-	{
-		mUltimateSpinCountDown--;
-		const float aFlips = PvzpAnimateCurveFloat(ULTIMATE_SPIN_TIME, 0, mUltimateSpinCountDown, 8.0f, 1.2f, PvzpCurves::CURVE_LINEAR);
-		mUltimateSpinPosition += aFlips * 0.01f;
-		if (mUltimateSpinPosition >= 1.0f)
-		{
-			mUltimateType = mUltimateSpinNext;
-			mUltimateSpinPosition = 0.0f;
-			if (mUltimateSpinCountDown > 0)
-				mUltimateSpinNext = PickRandomUltimateType(mUltimateNoRepeat);
-		}
-		if (mUltimateSpinCountDown == 0)
-		{
-			mUltimateType = mUltimateSpinNext;
-			mUltimateSpinPosition = 0.0f;
-			mApp->PlaySample(Sexy::SOUND_POINTS);
 		}
 	}
 
@@ -4600,18 +4557,7 @@ void Board::DrawUltimateButton(Graphics* g)
 	else if (!mUltimateReady)
 		aGrayness = 200;
 
-	if (mUltimateSpinCountDown > 0)
-	{
-		const int aOffsetY = FloatRoundToInt(-SEED_PACKET_HEIGHT * mUltimateSpinPosition);
-		Graphics aClipG(*g);
-		aClipG.ClipRect(aX, aY, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT);
-		DrawSeedPacket(&aClipG, static_cast<float>(aX), static_cast<float>(aY + aOffsetY), GetUltimateSeedIcon(mUltimateType), SeedType::SEED_NONE, 0.0f, 180, false, false);
-		DrawSeedPacket(&aClipG, static_cast<float>(aX), static_cast<float>(aY + SEED_PACKET_HEIGHT + aOffsetY), GetUltimateSeedIcon(mUltimateSpinNext), SeedType::SEED_NONE, 0.0f, 180, false, false);
-	}
-	else
-	{
-		DrawSeedPacket(g, static_cast<float>(aX), static_cast<float>(aY), GetUltimateSeedIcon(mUltimateType), SeedType::SEED_NONE, aPercentDark, aGrayness, false, false);
-	}
+	DrawSeedPacket(g, static_cast<float>(aX), static_cast<float>(aY), GetUltimateSeedIcon(mUltimateType), SeedType::SEED_NONE, aPercentDark, aGrayness, false, false);
 
 	if (MemoryImage* aLabel = GetUltimateLabelImage())
 	{
@@ -4634,22 +4580,26 @@ bool Board::IsUltimateButtonMouseOver() const
 	return ShouldShowUltimateButton() && mUltimateButton && mUltimateButton->IsMouseOver();
 }
 
-	void Board::TryActivateUltimate()
-	{
-		if (!ShouldShowUltimateButton())
-			return;
-		if (mApp->mGameScene != GameScenes::SCENE_PLAYING)
-			return;
-		if (!mUltimateReady || mUltimateSpinCountDown > 0 || mUltimateRefreshing)
-			return;
-		if (mApp->GetDialog(Dialogs::DIALOG_LEARNING_QUIZ) != nullptr)
-			return;
-		if (mPendingUltimateQuiz.mActive)
-			return;
+void Board::TryActivateUltimate()
+{
+	if (!ShouldShowUltimateButton())
+		return;
+	if (mApp->mGameScene != GameScenes::SCENE_PLAYING)
+		return;
+	if (!mUltimateReady || mUltimateRefreshing)
+		return;
+	if (mApp->GetDialog(Dialogs::DIALOG_LEARNING_QUIZ) != nullptr)
+		return;
+	if (mApp->GetDialog(Dialogs::DIALOG_ULTIMATE_CHOOSER) != nullptr)
+		return;
+	if (mPendingUltimateQuiz.mActive)
+		return;
 
-		// Always require a quiz before casting an ultimate.
-		StartLearningQuizUltimate();
-	}
+	UltimateChooserDialog* aDialog = new UltimateChooserDialog();
+	LawnApp::CenterDialog(aDialog, aDialog->mWidth, aDialog->mHeight);
+	mApp->AddDialog(Dialogs::DIALOG_ULTIMATE_CHOOSER, aDialog);
+	mApp->mWidgetManager->SetFocus(aDialog);
+}
 
 void Board::CastUltimate(UltimateType theType)
 {
@@ -6687,7 +6637,9 @@ void Board::Update()
 	}
 	if (mUltimateButton)
 	{
-		mUltimateButton->mDisabled = aDisabled || !mUltimateReady || mUltimateSpinCountDown > 0 || mUltimateRefreshing;
+		mUltimateButton->mDisabled = aDisabled || !mUltimateReady || mUltimateRefreshing
+			|| mApp->GetDialog(Dialogs::DIALOG_ULTIMATE_CHOOSER) != nullptr
+			|| mApp->GetDialog(Dialogs::DIALOG_LEARNING_QUIZ) != nullptr;
 		UpdateUltimateAbility();
 	}
 
