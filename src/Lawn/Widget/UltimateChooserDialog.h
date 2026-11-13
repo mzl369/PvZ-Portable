@@ -11,15 +11,12 @@
 
 #include "LawnDialog.h"
 #include "../../ConstEnums.h"
-#include <memory>
-
-class ToolTipWidget;
 
 class UltimateChooserDialog : public LawnDialog
 {
 public:
-	std::unique_ptr<ToolTipWidget> mToolTip;
-	UltimateType mToolTipType = UltimateType::NUM_ULTIMATE_TYPES;
+	UltimateType mHoverType = UltimateType::NUM_ULTIMATE_TYPES;
+	int mAppearTimer = 0;
 
 public:
 	UltimateChooserDialog();
@@ -31,11 +28,9 @@ public:
 	void UpdateCursor();
 	void Update() override;
 	void Draw(Graphics* g) override;
-	void ShowToolTip();
-	void RemoveToolTip();
 	void MouseDown(int x, int y, int theClickCount) override;
 	void MouseUp(int, int, int) override {}
-	void ButtonDepress(int theId) override;
+	void KeyDown(KeyCode theKey) override;
 };
 
 #endif
